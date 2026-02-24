@@ -26,6 +26,178 @@
       --color-primary: #{{ $userBs->base_color }};
       --color-primary-rgb: {{ hexToRgba($userBs->base_color) }}
     }
+
+    /* Mini cart offcanvas */
+    .cart-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+      z-index: 1049;
+    }
+    .cart-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-dropdown {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 380px;
+      max-width: 100%;
+      height: 100%;
+      background: #ffffff;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+      z-index: 1050;
+      transition: right .25s ease;
+      overflow-y: auto;
+    }
+    .cart-dropdown.open {
+      right: 0;
+    }
+    .cart-dropdown-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 1;
+    }
+    .cart-dropdown-close {
+      border: none;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    /* Standalone mini-cart offcanvas (outside header so it’s not clipped) */
+    .mini-cart-offcanvas {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 380px;
+      max-width: 100%;
+      height: 100%;
+      background: #ffffff;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+      z-index: 1050;
+      transition: right .25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .mini-cart-offcanvas.open {
+      right: 0;
+    }
+
+    .mini-cart-offcanvas-content {
+      flex: 1;
+      overflow-y: auto;
+      background: #f7f7f7;
+    }
+
+    .mini-cart-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .mini-cart-items-wrapper {
+      padding: 12px 16px;
+      background: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .mini-cart-order-summary {
+      background: #ffffff;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .mini-cart-order-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .mini-cart-order-summary-row.est-total {
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .mini-cart-coupons-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #ffffff;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .mini-cart-coupons-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-cart-bottom-bar {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px 16px;
+      background: #ffffff;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mini-cart-bottom-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-cart-bottom-main-total {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .mini-cart-bottom-main-caption {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .mini-cart-cta-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: none;
+      background: #111827;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s ease;
+    }
+
+    .mini-cart-cta-btn:hover {
+      background: #000000;
+      color: #ffffff;
+    }
   </style>
 
   @yield('styles')
@@ -229,6 +401,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   @else
     @includeIf('user-front.partials.mobile-footer-menu')
   @endif
+
+  <div class="cart-backdrop"></div>
+  <div id="mini-cart-offcanvas" class="mini-cart-offcanvas">
+    <div id="mini-cart-offcanvas-content" class="mini-cart-offcanvas-content"></div>
+  </div>
 
   <!-- WhatsApp Chat Button -->
   <div id="WAButton"></div>

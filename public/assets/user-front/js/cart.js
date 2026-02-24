@@ -52,16 +52,7 @@ function addToCart(url, variant, qty) {
             $("#cartQuantity").load(location.href + " #cartQuantity");
             $("#variationModal").modal('hide');
             $("#cartIconWrapper").load(location.href + " #cartIconWrapper>*", "");
-            cartDropdown();
-
-            // simple proceed-to-pay prompt after successful add to cart
-            if (typeof checkoutUrl !== 'undefined' && checkoutUrl) {
-                setTimeout(function () {
-                    if (confirm("Item added to your cart. Do you want to proceed to pay now?")) {
-                        window.location.href = checkoutUrl;
-                    }
-                }, 300);
-            }
+            openMiniCartOffcanvas();
         } else {
             toastr["error"](res.error);
         }
@@ -762,14 +753,41 @@ function cartDropdown() {
             cartDropdownCount();
             $("#cart-dropdown-header").html('');
             $("#cart-dropdown-header").append(data);
-
         },
         error: function (error) {
         }
     });
-
-
 }
+
+function openMiniCartOffcanvas() {
+    var route = mainurl + '/cart/dropdown';
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        url: route,
+        method: 'GET',
+        success: function (data) {
+            cartDropdownCount();
+            $("#cart-dropdown-header").html('');
+            $("#cart-dropdown-header").append(data);
+            $("#mini-cart-offcanvas-content").html(data);
+            $('.mini-cart-offcanvas').addClass('open');
+            $('.cart-backdrop').addClass('active');
+        },
+        error: function (error) {
+        }
+    });
+}
+
+// close mini cart offcanvas
+$(document).on('click', '.cart-backdrop, .cart-dropdown-close', function () {
+    $('.mini-cart-offcanvas').removeClass('open');
+    $('.cart-dropdown').removeClass('open');
+    $('.cart-backdrop').removeClass('active');
+});
 
 
 function cartDropdownCount() {
