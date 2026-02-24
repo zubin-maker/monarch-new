@@ -1,0 +1,29 @@
+LOCAL SETUP (Monarch on store.monarchergo.com:8000)
+====================================================
+
+.env is already set for:
+  APP_URL=http://store.monarchergo.com:8000
+  WEBSITE_HOST=store.monarchergo.com
+  DB points to your imported DB (monarch)
+
+YOU MUST DO THIS ONCE (so store.monarchergo.com points to your PC):
+--------------------------------------------------------------------
+1. Open Notepad as Administrator (right-click Notepad -> Run as administrator).
+2. File -> Open -> go to: C:\Windows\System32\drivers\etc\
+3. Change "Text Documents" to "All Files".
+4. Open the file: hosts
+5. At the bottom add this line:
+   127.0.0.1 store.monarchergo.com
+6. Save and close.
+
+THEN RUN (in project folder):
+------------------------------
+php artisan config:clear
+php artisan cache:clear
+php artisan serve --host=0.0.0.0 --port=8000
+
+OPEN IN BROWSER:
+---------------
+http://store.monarchergo.com:8000/main
+
+You should see the Monarch furniture site (same as live).
