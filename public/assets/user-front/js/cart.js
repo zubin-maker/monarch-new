@@ -981,3 +981,224 @@ function updateQuantity(url) {
 /* *************************************
  * Cart page end
  * *************************************/
+
+/* *************************************
+ * Checkout OTP modal (Shopflo-style: phone → OTP → address)
+ * *************************************/
+(function () {
+    "use strict";
+    var baseUrl = (typeof mainurl !== "undefined" ? mainurl : "").replace(/\/$/, "");
+    var otpSendUrl = baseUrl ? baseUrl + "/otp/send" : "";
+    var otpVerifyUrl = baseUrl ? baseUrl + "/otp/verify" : "";
+    var otpCompleteUrl = baseUrl ? baseUrl + "/checkout/otp-complete" : "";
+    var otpRegisterUrl = baseUrl ? baseUrl + "/checkout/otp-register" : "";
+    var resendTimer = null;
+    var currentPhone = "";
+
+    function showStep(stepId) {
+        document.querySelectorAll(".checkout-otp-step").forEach(function (el) {
+            el.classList.add("d-none");
+        });
+        var el = document.getElementById(stepId);
+        if (el) el.classList.remove("d-none");
+    }
+
+    function startResendCountdown(sec) {
+        var el = document.getElementById("checkout-otp-resend-countdown");
+        if (!el) return;
+        var n = sec;
+        el.textContent = n;
+        if (resendTimer) clearInterval(resendTimer);
+        resendTimer = setInterval(function () {
+            n--;
+            el.textContent = n;
+            if (n <= 0) {
+                clearInterval(resendTimer);
+                resendTimer = null;
+            }
+        }, 1000);
+    }
+
+    function getOtpDigits() {
+        var digits = "";
+        for (var i = 1; i <= 6; i++) {
+            var inp = document.getElementById("otp-" + i);
+            if (inp) digits += inp.value;
+        }
+        return digits;
+    }
+
+    function clearOtpDigits() {
+        for (var i = 1; i <= 6; i++) {
+            var inp = document.getElementById("otp-" + i);
+            if (inp) inp.value = "";
+        }
+    }
+
+    $(document).on("click", "#proceed-to-pay-otp-btn", function () {
+        $(".mini-cart-offcanvas").removeClass("open");
+        $(".cart-backdrop").removeClass("active");
+        currentPhone = "";
+        clearOtpDigits();
+        showStep("checkout-otp-step-phone");
+        $("#checkout-otp-phone").val("");
+        $("#checkout-otp-phone-error").text("").parent().find("#checkout-otp-phone").removeClass("is-invalid");
+        $("#checkout-otp-verify-error").text("");
+        var modalEl = document.getElementById("checkout-otp-modal");
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+            var modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        } else if (modalEl) {
+            $(modalEl).modal("show");
+        }
+    });
+
+    $("#checkout-otp-send-btn").on("click", function () {
+        var phone = $("#checkout-otp-phone").val().trim();
+        if (!phone) {
+            $("#checkout-otp-phone").addClass("is-invalid");
+            $("#checkout-otp-phone-error").text("Phone number is required");
+            return;
+        }
+        var $btn = $(this).prop("disabled", true);
+        $.ajax({
+            url: otpSendUrl,
+            method: "POST",
+            data: { phone: phone, _token: $('meta[name="csrf-token"]').attr("content") },
+            success: function () {
+                currentPhone = phone;
+                $("#checkout-otp-display-phone").text(phone);
+                showStep("checkout-otp-step-otp");
+                clearOtpDigits();
+                document.getElementById("otp-1") && document.getElementById("otp-1").focus();
+                startResendCountdown(60);
+            },
+            error: function (xhr) {
+                var msg = (xhr.responseJSON && xhr.responseJSON.message) || "Failed to send OTP. Please try again.";
+                $("#checkout-otp-phone").addClass("is-invalid");
+                $("#checkout-otp-phone-error").text(msg);
+            }
+        }).always(function () {
+            $btn.prop("disabled", false);
+        });
+    });
+
+    $("#checkout-otp-edit-phone").on("click", function () {
+        showStep("checkout-otp-step-phone");
+        if (resendTimer) clearInterval(resendTimer);
+    });
+
+    $("#checkout-otp-verify-btn").on("click", function () {
+        var code = getOtpDigits();
+        if (code.length !== 6) {
+            $("#checkout-otp-verify-error").text("Please enter all 6 digits");
+            return;
+        }
+        var $btn = $(this).prop("disabled", true);
+        $("#checkout-otp-verify-error").text("");
+        $.ajax({
+            url: otpVerifyUrl,
+            method: "POST",
+            data: {
+                phone: currentPhone,
+                code: code,
+                _token: $('meta[name="csrf-token"]').attr("content")
+            },
+            success: function () {
+                $.ajax({
+                    url: otpCompleteUrl,
+                    method: "POST",
+                    data: {
+                        phone: currentPhone,
+                        _token: $('meta[name="csrf-token"]').attr("content")
+                    },
+                    success: function (data) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                            return;
+                        }
+                        if (data.need_address) {
+                            showStep("checkout-otp-step-address");
+                            $("#checkout-otp-fname, #checkout-otp-lname, #checkout-otp-email, #checkout-otp-address, #checkout-otp-city, #checkout-otp-country").val("");
+                        }
+                    },
+                    error: function (xhr) {
+                        $("#checkout-otp-verify-error").text(xhr.responseJSON && xhr.responseJSON.error || "Something went wrong.");
+                    }
+                }).always(function () {
+                    $btn.prop("disabled", false);
+                });
+            },
+            error: function (xhr) {
+                $("#checkout-otp-verify-error").text(xhr.responseJSON && xhr.responseJSON.message || "Invalid OTP. Please try again.");
+                $btn.prop("disabled", false);
+            }
+        });
+    });
+
+    $("#checkout-otp-submit-address").on("click", function () {
+        var payload = {
+            phone: currentPhone,
+            first_name: $("#checkout-otp-fname").val().trim(),
+            last_name: $("#checkout-otp-lname").val().trim(),
+            email: $("#checkout-otp-email").val().trim(),
+            billing_address: $("#checkout-otp-address").val().trim(),
+            billing_city: $("#checkout-otp-city").val().trim(),
+            billing_state: $("#checkout-otp-state").val().trim(),
+            billing_country: $("#checkout-otp-country").val().trim(),
+            _token: $('meta[name="csrf-token"]').attr("content")
+        };
+        var err = [];
+        if (!payload.first_name) err.push("First name is required");
+        if (!payload.last_name) err.push("Last name is required");
+        if (!payload.email) err.push("Email is required");
+        if (!payload.billing_address) err.push("Address is required");
+        if (!payload.billing_city) err.push("City is required");
+        if (!payload.billing_country) err.push("Country / Pincode is required");
+        if (err.length) {
+            $("#checkout-otp-address-errors").text(err.join(". "));
+            return;
+        }
+        $("#checkout-otp-address-errors").text("");
+        var $btn = $(this).prop("disabled", true);
+        $.ajax({
+            url: otpRegisterUrl,
+            method: "POST",
+            data: payload,
+            success: function (data) {
+                if (data.redirect) window.location.href = data.redirect;
+            },
+            error: function (xhr) {
+                var msg = "Could not create account. Please try again.";
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    var o = xhr.responseJSON.errors;
+                    msg = (o.email && o.email[0]) || (o.phone && o.phone[0]) || JSON.stringify(o);
+                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                    msg = xhr.responseJSON.error;
+                }
+                $("#checkout-otp-address-errors").text(msg);
+            }
+        }).always(function () {
+            $btn.prop("disabled", false);
+        });
+    });
+
+    $(document).on("input", "#checkout-otp-digits input", function () {
+        var $this = $(this);
+        var idx = parseInt($this.data("idx"), 10);
+        var val = $this.val();
+        if (val.length > 1) {
+            var digits = val.replace(/\D/g, "").split("").slice(0, 6);
+            $("#checkout-otp-digits input").each(function (i) {
+                $(this).val(digits[i] || "");
+            });
+            var next = document.getElementById("otp-" + Math.min(digits.length + 1, 6));
+            if (next) next.focus();
+            return;
+        }
+        if (val && idx < 5) {
+            var next = document.getElementById("otp-" + (idx + 2));
+            if (next) next.focus();
+        }
+    });
+})();

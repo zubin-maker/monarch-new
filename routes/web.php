@@ -9,6 +9,10 @@ if (!app()->runningInConsole()) {
         $domain = 'www.' . env('WEBSITE_HOST');
     }
 }
+// Global OTP endpoints (no tenant prefix) for testing & checkout
+Route::post('/otp/send', 'UserFront\OtpController@send')->name('otp.send.global');
+Route::post('/otp/verify', 'UserFront\OtpController@verify')->name('otp.verify.global');
+
 Route::fallback(function () {
     return view('errors.404');
 })->middleware('setlang');

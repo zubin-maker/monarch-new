@@ -168,6 +168,13 @@ Route::group(['domain' => $domain, 'prefix' => $prefix, 'middleware' => ['userVi
 
     Route::post('/coupon', 'UserFront\ItemController@coupon')->name('front.coupon');
 
+    // Twilio OTP endpoints
+    Route::post('/otp/send', 'UserFront\OtpController@send')->name('front.user.otp.send');
+    Route::post('/otp/verify', 'UserFront\OtpController@verify')->name('front.user.otp.verify');
+
+    Route::post('/checkout/otp-complete', 'UserFront\CheckoutOtpController@completeCheckout')->name('front.user.checkout.otp.complete');
+    Route::post('/checkout/otp-register', 'UserFront\CheckoutOtpController@registerGuest')->name('front.user.checkout.otp.register');
+
     Route::get('/checkout/guest', 'UserFront\ItemController@checkoutGuest')->name('front.user.checkout.guest');
 
     Route::post('/item/payment/submit', 'UserFront\UsercheckoutController@checkout')->name('item.payment.submit')->middleware('Demo');

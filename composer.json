@@ -43,6 +43,7 @@
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-sitemap": "^6.0.0",
+        "twilio/sdk": "^8.11",
         "unisharp/laravel-filemanager": "^2.2",
         "willvincent/feeds": "^2.2"
     },

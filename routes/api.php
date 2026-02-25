@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\UserFront\OtpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,7 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Twilio OTP test endpoints (no CSRF)
+Route::post('/otp/send', [OtpController::class, 'send']);
+Route::post('/otp/verify', [OtpController::class, 'verify']);

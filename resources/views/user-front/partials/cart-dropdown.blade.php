@@ -175,9 +175,15 @@
         </div>
         {{-- Placeholder: savings text can be wired later if you track MRP vs sale price --}}
       </div>
-      <a href="{{ $checkoutRoute }}" class="mini-cart-cta-btn">
-        {{ $keywords['Proceed to Pay'] ?? __('Proceed To Pay') }}
-      </a>
+      @if (auth()->guard('customer')->check())
+        <a href="{{ $checkoutRoute }}" class="mini-cart-cta-btn">
+          {{ $keywords['Proceed to Pay'] ?? __('Proceed To Pay') }}
+        </a>
+      @else
+        <button type="button" class="mini-cart-cta-btn w-100" id="proceed-to-pay-otp-btn" data-checkout-url="{{ $checkoutRoute }}">
+          {{ $keywords['Proceed to Pay'] ?? __('Proceed To Pay') }}
+        </button>
+      @endif
     </div>
   @endif
 </div>

@@ -407,6 +407,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="mini-cart-offcanvas-content" class="mini-cart-offcanvas-content"></div>
   </div>
 
+  @includeIf('user-front.partials.checkout-otp-modal')
+
   <!-- WhatsApp Chat Button -->
   <div id="WAButton"></div>
 
