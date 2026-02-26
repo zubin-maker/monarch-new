@@ -1,5 +1,41 @@
 'use strict';
 
+// Debug helper: log current products and their rating in the browser console
+function logShopProducts() {
+    if (typeof console === 'undefined') return;
+
+    console.group('Shop products on page');
+    $('#show-products .product-default').each(function () {
+        var $card = $(this);
+        var name = $.trim($card.find('.product-title a').first().text());
+
+        // Try to read numeric rating from the visible text, e.g. "4.6/5 (8017)"
+        var ratingText = $.trim($card.find('.ratings-total').first().text());
+        var rating = null;
+
+        if (ratingText) {
+            var match = ratingText.match(/([0-9]+(?:\.[0-9]+)?)/);
+            if (match) {
+                rating = parseFloat(match[1]);
+            }
+        }
+
+        // Fallback for list view where ratings-total has only count, derive from width style
+        if (rating === null) {
+            var widthStr = $card.find('.product-ratings .rating').first().css('width'); // e.g. "80%"
+            if (widthStr) {
+                var pct = parseFloat(widthStr);
+                if (!isNaN(pct)) {
+                    rating = +(pct / 20).toFixed(1);
+                }
+            }
+        }
+
+        console.log(name || '(no title)', ' | rating:', rating !== null ? rating : 'N/A');
+    });
+    console.groupEnd();
+}
+
 function clickSubmit(type = null) {
     $('#show-products').html('');
     $('#skeleton-loader').removeClass('d-none');
@@ -18,7 +54,10 @@ function clickSubmit(type = null) {
                 var tooltipTriggerList = [].slice.call($('[data-bs-toggle="tooltip"]'))
                 tooltipTriggerList.map(function (tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
+                });
+
+                // Log products + ratings to the console after each filter change
+                logShopProducts();
             }
         },
         error: function (xhr, status, error) {
@@ -80,6 +119,7 @@ $('body').on('click', '.category', function (e) {
     $('#subcategory').val('');
     $('#category').val(slug);
     $('#selected-variants').val('');
+    $('#selected-ratings').val('');
     $("#rating_div").load(location.href + " #rating_div > *");
     $("#on_sale_div").load(location.href + " #on_sale_div > *");
     $('#page').val('');
@@ -103,6 +143,7 @@ $('body').on('click', '.subcategory', function (e) {
 
     $('#subcategory').val(subcategory_slug);
     $('#selected-variants').val('');
+    $('#selected-ratings').val('');
     $("#rating_div").load(location.href + " #rating_div > *");
     $("#on_sale_div").load(location.href + " #on_sale_div > *");
     $('#page').val('');
@@ -211,6 +252,13 @@ null != t && (noUiSlider.create(t, {
         let filterPrice = t;
         let minCost = parseFloat(filterPrice[0]);
         let maxCost = parseFloat(filterPrice[1]);
+        if (minCost > maxCost) {
+            var tmp = minCost;
+            minCost = maxCost;
+            maxCost = tmp;
+        }
+        minCost = Math.round(minCost * 100) / 100;
+        maxCost = Math.round(maxCost * 100) / 100;
 
         $('#min-id').val(minCost);
         $('#max-id').val(maxCost);

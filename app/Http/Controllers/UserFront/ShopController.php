@@ -252,14 +252,14 @@ public function shop(Request $request, $categorySlug = null)
     }
 
     // -----------------------------------------------------------------
-    // 3. Other filters (price, keyword, sort, on_sale …)
+    // 3. Other filters (price, keyword, sort, on_sale, rating …)
     // -----------------------------------------------------------------
-    $min = $max = $keyword = $sort = $on_sale = null;
+    $min = $max = $keyword = $sort = $on_sale = $rating = null;
 
     $userCurrentCurr   = app('userCurrentCurr');
-    $userSelectedCurr  = UserCurrency::where('id', $userCurrentCurr->id)
-                            ->where('user_id', $user->id)
-                            ->first();
+    $userSelectedCurr   = $userCurrentCurr
+        ? UserCurrency::where('id', $userCurrentCurr->id)->where('user_id', $user->id)->first()
+        : null;
     $userDefaultCurr   = UserCurrency::where('is_default', 1)
                             ->where('user_id', $user->id)
                             ->first();
@@ -268,9 +268,12 @@ public function shop(Request $request, $categorySlug = null)
         $min = (float) $request->min;
         $max = (float) $request->max;
 
-        if ($userDefaultCurr->id != $userCurrentCurr->id) {
+        if ($userDefaultCurr && $userSelectedCurr && $userDefaultCurr->id != $userSelectedCurr->id) {
             $min /= $userSelectedCurr->value;
             $max /= $userSelectedCurr->value;
+        }
+        if ($min > $max) {
+            [$min, $max] = [$max, $min];
         }
     }
 
@@ -282,6 +285,10 @@ public function shop(Request $request, $categorySlug = null)
     }
     if ($request->filled('on_sale')) {
         $on_sale = $request->on_sale;
+    }
+    if ($request->filled('ratings')) {
+        $r = (int) $request->ratings;
+        $rating = $r >= 1 && $r <= 5 ? $r : null;
     }
 
     // -----------------------------------------------------------------
@@ -317,6 +324,9 @@ public function shop(Request $request, $categorySlug = null)
 
         // ---- Keyword ----
         ->when($keyword, fn($q) => $q->where('user_item_contents.title', 'like', "%{$keyword}%"))
+
+        // ---- Rating ----
+        ->when($rating, fn($q) => $q->where('user_items.rating', '>=', $rating))
 
         // ---- Sorting ----
         ->when($sort, function ($q) use ($sort) {
@@ -418,19 +428,24 @@ public function shop(Request $request, $categorySlug = null)
             }
         }
         if ($request->filled('min') && $request->filled('max')) {
-            $min = $request['min'];
-            $max = $request['max'];
+            $min = (float) $request->min;
+            $max = (float) $request->max;
 
             $userCurrentCurr = app('userCurrentCurr');
+            $userSelectedCurr = $userCurrentCurr
+                ? UserCurrency::where('id', $userCurrentCurr->id)->where('user_id', $user->id)->first()
+                : null;
+            $userDefaultCurr = UserCurrency::where('is_default', 1)->where('user_id', $user->id)->first();
 
-            if (!is_null($userCurrentCurr)) {
-                $min = $min / $userCurrentCurr->value;
-                $max = $max / $userCurrentCurr->value;
+            if ($userDefaultCurr && $userSelectedCurr && $userDefaultCurr->id != $userSelectedCurr->id) {
+                $min /= $userSelectedCurr->value;
+                $max /= $userSelectedCurr->value;
                 $min = (float) $min;
                 $max = (float) $max;
-            } else {
-                $min = (float) $min;
-                $max = (float) $max;
+            }
+
+            if ($min > $max) {
+                [$min, $max] = [$max, $min];
             }
         }
         if ($request->filled('keyword')) {
@@ -440,7 +455,8 @@ public function shop(Request $request, $categorySlug = null)
             $sort = $request['sort'];
         }
         if ($request->filled('ratings')) {
-            $rating = $request->ratings;
+            $rating = (int) $request->ratings;
+            $rating = $rating >= 1 && $rating <= 5 ? $rating : null;
         }
         if ($request->filled('on_sale')) {
             $on_sale = $request->on_sale;

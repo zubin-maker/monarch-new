@@ -168,9 +168,10 @@
                     </h3>
                     <div id="ratings" class="collapse show">
                       <ul class="list-group custom-radio">
+                        @php $req_rating = request()->input('ratings', ''); @endphp
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings" id="all_ratings"
-                            value="" checked>
+                            value="" {{ $req_rating === '' || $req_rating === null ? 'checked' : '' }}>
                           <label class="form-radio-label" for="all_ratings">
                             {{ $keywords['All'] ?? __('All') }}
                             <span class="qty"></span>
@@ -179,7 +180,7 @@
 
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings"
-                            id="five_star_ratings" value="5">
+                            id="five_star_ratings" value="5" {{ $req_rating === '5' ? 'checked' : '' }}>
                           <label class="form-radio-label" for="five_star_ratings">
                             <span class="ms-1">
                               <i class="fas fa-star"></i>
@@ -193,7 +194,7 @@
                         </li>
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings"
-                            id="four_star_ratings" value="4">
+                            id="four_star_ratings" value="4" {{ $req_rating === '4' ? 'checked' : '' }}>
                           <label class="form-radio-label" for="four_star_ratings">
                             <span class="ms-1">
                               <i class="fas fa-star"></i>
@@ -206,7 +207,7 @@
                         </li>
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings"
-                            id="three_star_ratings" value="3">
+                            id="three_star_ratings" value="3" {{ $req_rating === '3' ? 'checked' : '' }}>
                           <label class="form-radio-label" for="three_star_ratings">
                             <span class="ms-1">
                               <i class="fas fa-star"></i>
@@ -218,7 +219,7 @@
                         </li>
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings"
-                            id="two_star_ratings" value="2">
+                            id="two_star_ratings" value="2" {{ $req_rating === '2' ? 'checked' : '' }}>
                           <label class="form-radio-label" for="two_star_ratings">
                             <span class="ms-1">
                               <i class="fas fa-star"></i>
@@ -229,7 +230,7 @@
                         </li>
                         <li>
                           <input class="input-radio produt_ratings" type="radio" name="ratings"
-                            id="one_star_ratings" value="1">
+                            id="one_star_ratings" value="1" {{ $req_rating === '1' ? 'checked' : '' }}>
                           <label class="form-radio-label" for="one_star_ratings">
                             <span class="ms-1">
                               <i class="fas fa-star"></i>
@@ -320,7 +321,7 @@
   <form id="filtersForm" class="d-none" action="{{ route('front.user.shop.search', getParam()) }}" method="GET">
 
     <input type="hidden" id="category" name="category"
-      value="{{ !empty(request()->input('category')) ? request()->input('category') : '' }}">
+      value="{{ !empty(request()->input('category')) ? request()->input('category') : (optional($selected_category)->slug ?? '') }}">
     <input type="hidden" id="subcategory" name="subcategory"
       value="{{ !empty(request()->input('subcategory')) ? request()->input('subcategory') : '' }}">
 
@@ -339,9 +340,10 @@
     <input type="hidden" id="on-sale-id" name="on_sale"
       value="{{ !empty(request()->input('on_sale')) ? request()->input('on_sale') : '' }}">
 
-    <input type="hidden" id="view-type" name="view_type" value="{{ Session::get('view-type') }}">
+    <input type="hidden" id="view-type" name="view_type" value="{{ Session::get('view_type') }}">
     <input type="hidden" id="selected-variants" name="variants" value="">
-    <input type="hidden" id="selected-ratings" name="ratings" value="">
+    <input type="hidden" id="selected-ratings" name="ratings"
+      value="{{ request()->input('ratings', '') }}">
 
 
     @if ($selected_category)

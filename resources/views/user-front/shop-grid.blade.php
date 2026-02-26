@@ -76,23 +76,23 @@
               href="{{ route('front.user.productDetails', ['slug' => $item->product_slug]) }}">{{ $item->title }}</a>
           </h4>
           @if ($shop_settings->item_rating_system == 1)
-        <div class="d-flex justify-content-center align-items-center">
-    <div class="product-ratings rate text-xsm">
-        @php 
-            $realCount = reviewCount($item->item_id); 
-            $fakeAdd = $item->fake_review_count ?? 0;
-            $displayCount = $realCount + $fakeAdd;
-            $avgReview = \App\Models\User\UserItemReview::where('item_id', $item->item_id)->avg('review') ?? 0;
-        @endphp
-        
-        <div class="rating" style="width:{{ number_format($avgReview, 1) * 20 }}%"></div>
-    </div>
-    
-    <span class="ratings-total">
-        {{ number_format($avgReview, 1) }}/5 
-        ({{ $displayCount }})
-    </span>
-</div>
+            <div class="d-flex justify-content-center align-items-center">
+              @php
+                $realCount = reviewCount($item->item_id);
+                $fakeAdd = $item->fake_review_count ?? 0;
+                $displayCount = $realCount + $fakeAdd;
+                $avgReview = $item->rating ?? 0; // keep in sync with filter (user_items.rating)
+              @endphp
+
+              <div class="product-ratings rate text-xsm">
+                <div class="rating" style="width:{{ number_format($avgReview, 1) * 20 }}%"></div>
+              </div>
+
+              <span class="ratings-total">
+                {{ number_format($avgReview, 1) }}/5
+                ({{ $displayCount }})
+              </span>
+            </div>
           @endif
           @php
             $flash_info = flashAmountStatus($item->item_id, $item->current_price);

@@ -42,21 +42,31 @@
       visibility: visible;
     }
 
-    .cart-dropdown {
-      position: fixed;
-      top: 0;
-      right: -420px;
-      width: 380px;
-      max-width: 100%;
-      height: 100%;
-      background: #ffffff;
-      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
-      z-index: 1050;
-      transition: right .25s ease;
-      overflow-y: auto;
+    /* Header cart hover dropdown (small panel under cart icon) */
+    .header .menu-item {
+      position: relative;
     }
-    .cart-dropdown.open {
+    .cart-dropdown {
+      position: absolute;
+      top: 100%;
       right: 0;
+      min-width: 320px;
+      max-width: 380px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+      border-radius: 8px;
+      padding: 0;
+      margin-top: 10px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity .18s ease, visibility .18s ease, transform .18s ease;
+      z-index: 1050;
+    }
+    .header .menu-item:hover > .cart-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
     .cart-dropdown-header-bar {
       display: flex;
