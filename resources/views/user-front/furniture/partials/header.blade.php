@@ -175,18 +175,26 @@ font-size: 14px;
                         <li class="nav-item has-submenu">
                             <a class="nav-link " target="_self" href="{{ route('front.user.shop') }}">Shop <i
                                     class="fal fa-plus"></i></a>
-                           <ul class="submenu">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('front.user.shop', 'desk-tables') }}" target="_self">
-                Height Adjustable Tables
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('front.user.shop', 'chairs') }}" target="_self">
-                Chairs
-            </a>
-        </li>
-    </ul>
+                            <ul class="submenu">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('front.user.shop', 'office-chairs') }}"
+                                        target="_self">
+                                        Office Chairs
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('front.user.shop', 'desk-tables') }}"
+                                        target="_self">
+                                        Height Adjustable Tables
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('front.user.shop', 'gaming-chair') }}"
+                                        target="_self">
+                                        Gaming Chair
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-item d-none">

@@ -7,6 +7,29 @@ let variations = {};
 var ffffff = 0;
 var $voptions = '';
 
+// Auto-select single-option variant groups in the variation modal
+function autoSelectSingleVariantOptions() {
+    var $container = $('#variants');
+    if (!$container.length) return;
+
+    var groups = {};
+    $container.find('input.voptions').each(function () {
+        var name = $(this).attr('name');
+        if (!name) return;
+        if (!groups[name]) {
+            groups[name] = [];
+        }
+        groups[name].push(this);
+    });
+
+    Object.keys(groups).forEach(function (name) {
+        var items = groups[name];
+        if (items.length === 1) {
+            $(items[0]).prop('checked', true).trigger('change');
+        }
+    });
+}
+
 function totalPrice(qty) {
     qty = qty.toString().length > 0 ? qty : 0;
 
@@ -135,6 +158,8 @@ $('body').on('click', '.btn-wishlist', function (e) {
 
                 $(".variation-label").removeClass("d-none");
                 $("#variants").html(result);
+                // If a variant group has only one option, pre-select it
+                autoSelectSingleVariantOptions();
                 $(".request-loader").removeClass("show");
             });
             $(".modal-cart-link").attr('data-item_id', item_id);
