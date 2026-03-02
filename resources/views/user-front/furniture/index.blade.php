@@ -791,21 +791,19 @@ section.vectary_iframe {
               </h5>
             @else
               <div class="category-slider" id="cat-slider-furniture" data-slick='{"slidesToShow": 3}'>
-
                 @foreach ($item_categories as $cat)
-                  <div class="category-item    color-1">
+                  <a class="category-item color-1" href="{{ route('front.user.shop', $cat->slug) }}">
                     <div class="category-icon" style="--category-bg:#{{ $cat->color }}">
-                      <a
-                          href="{{ route('front.user.shop', $cat->slug) }}"><img class="lazyload blur-up" src="{{ asset('assets/front/images/placeholder.png') }}"
-                        data-src="{{ asset('assets/front/img/user/items/categories/' . $cat->image) }}" alt=""></a>
+                      <img class="lazyload blur-up" src="{{ asset('assets/front/images/placeholder.png') }}"
+                        data-src="{{ asset('assets/front/img/user/items/categories/' . $cat->image) }}" alt="">
                     </div>
                     <div class="category-content border">
-                      <h3 class="category-title lc-1"><a
-                          href="{{ route('front.user.shop', $cat->slug) }}">{{ $cat->name }}</a>
+                      <h3 class="category-title lc-1">
+                        {{ $cat->name }}
                       </h3>
                       <span class="line"></span>
                     </div>
-                  </div>
+                  </a>
                 @endforeach
               </div>
             @endif
@@ -1187,8 +1185,7 @@ use Illuminate\Support\Str;
     .category-2 .category-item .category-icon {
       width: 200px !important;
       height: 200px !important;
-      margin-bottom: -90px !important;
-      margin-inline-start: 0 !important;
+      margin: 0 auto -130px auto !important; /* pull card up closer under image to reduce gap */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1204,9 +1201,43 @@ use Illuminate\Support\Str;
       display: none !important;
     }
 
+    /* Make card taller and title sit lower, in uppercase, with hover effects */
     .category-2 .category-item .category-content {
-      padding: 80px 20px 30px !important;
-      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 50px 24px 36px !important;
+      min-height: 210px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .category-2 .category-item .category-content .category-title {
+      margin-top: 0 !important;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .category-2 .category-item .category-content .category-title a {
+      text-decoration: none;
+    }
+
+    /* Hover state: blue background and slightly taller box */
+    .category-2 .category-item:hover .category-content {
+      background-color: var(--color-primary);
+      color: #ffffff;
+      padding-top: 60px !important;
+      padding-bottom: 44px !important;
+      min-height: 230px;
+      box-shadow: 0px 5px 30px rgba(49, 49, 49, 0.18);
+    }
+
+    .category-2 .category-item:hover .category-content .category-title {
+      color: #ffffff;
     }
   </style>
 @endsection
