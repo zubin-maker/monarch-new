@@ -778,7 +778,7 @@ section.vectary_iframe {
         <div class="row">
           <div class="col-12">
             <div class="section-title title-inline mb-20">
-              <h2 class="title mb-2">{{ $userSec->category_section_title ?? ($keywords['Category'] ?? __('Category')) }}
+              <h2 class="title mb-2">Product Category
                 <span class="line left_right_slide_anim"></span>
               </h2>
               <p class="text">{{ $userSec->category_section_subtitle ?? '' }} </p>
