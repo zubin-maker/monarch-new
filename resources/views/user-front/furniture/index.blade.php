@@ -432,6 +432,32 @@ section.vectary_iframe {
 .bg2{
     background-color: #f5f2ed;
 }
+/* Category icons: no background at all — image sits on the card like the reference (Office Chairs / Gaming Chairs) */
+.category-2 .category-item .category-icon,
+.category-2 .category-item .category-icon::after {
+    background: transparent !important;
+}
+/* Larger category image */
+.category-2 .category-item .category-icon {
+    width: 180px;
+    height: 180px;
+    margin-bottom: -80px;
+    margin-inline-start: 10px;
+}
+.category-2 .category-item .category-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+/* Remove orange/yellow underline below category title */
+.category-2 .category-item .category-content .line {
+    display: none !important;
+}
+/* Taller content box */
+.category-2 .category-item .category-content {
+    padding: 56px 16px 28px;
+    min-height: 100px;
+}
   </style>
   
    
@@ -615,7 +641,7 @@ section.vectary_iframe {
 
 
   <div class="section-title title-inline mb-20 d-flex flex-column">
-              <h2 class="title ">Monarch Ergo — Empowering Workspaces for 25+ Years
+              <h2 class="title ">Monarch Ergo — Empowering Workspaces for 30+ Years
                 <span class="line left_right_slide_anim"></span>
               </h2>
               <p class="text">Trusted by leading organizations to create innovative, high-performance workspaces. </p>
@@ -764,7 +790,7 @@ section.vectary_iframe {
                 {{ $keywords['NO CATEGORIES FOUND'] ?? __('NO CATEGORIES FOUND') }}
               </h5>
             @else
-              <div class="category-slider" id="cat-slider-furniture" data-slick='{"slidesToShow": 2}'>
+              <div class="category-slider" id="cat-slider-furniture" data-slick='{"slidesToShow": 3}'>
 
                 @foreach ($item_categories as $cat)
                   <div class="category-item    color-1">
@@ -1148,6 +1174,43 @@ use Illuminate\Support\Str;
   <!-- Quick View Modal End -->
 
 @endsection
+
+@section('styles')
+  @parent
+  <style>
+    /* Ensure category icon tweaks override theme CSS */
+    .category-2 .category-item .category-icon,
+    .category-2 .category-item .category-icon::after {
+      background: transparent !important;
+    }
+
+    .category-2 .category-item .category-icon {
+      width: 200px !important;
+      height: 200px !important;
+      margin-bottom: -90px !important;
+      margin-inline-start: 0 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-2 .category-item .category-icon img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+
+    .category-2 .category-item .category-content .line {
+      display: none !important;
+    }
+
+    .category-2 .category-item .category-content {
+      padding: 80px 20px 30px !important;
+      min-height: 150px;
+    }
+  </style>
+@endsection
+
 <script>
 document.querySelectorAll(".hotspot .dot").forEach(dot => {
   dot.addEventListener("click", function () {
