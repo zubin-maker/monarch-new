@@ -184,14 +184,11 @@
         </div>
        <div>
          @if ($shop_settings->catalog_mode != 1)
-              <a href="#" class="btn btn-md btn-danger radius-sm mb-20 cart-link"
-                data-title="{{ $item->title }}" data-current_price="{{ currency_converter($product_current_price) }}"
-                data-item_id="{{ $item->item_id }}" data-language_id="{{ $uLang }}"
-                data-totalVari="{{ check_variation($item->item_id) }}"
-                data-variations="{{ check_variation($item->item_id) > 0 ? 'yes' : null }}"
-                data-href="{{ route('front.user.add.cart', ['id' => $item->item_id, getParam()]) }}"
-                style="margin-top:10px"
-                title="{{ $keywords['Shop_Now'] ?? __('Shop Now') }}">{{ $keywords['Shop_Now'] ?? __('Shop Now') }}</a>
+              <a href="{{ route('front.user.productDetails', ['slug' => $item->product_slug]) }}"
+                class="btn btn-md btn-danger radius-sm mb-20"
+                style="margin-top:10px">
+                {{ $keywords['Shop_Now'] ?? __('Shop Now') }}
+              </a>
             @endif
         </div>
         @php

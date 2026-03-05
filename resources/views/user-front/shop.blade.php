@@ -73,7 +73,12 @@
                               ->where('user_item_contents.category_id', '=', $category->id)
                               ->count();
                         @endphp
-                        <li class="list-dropdown {{ request()->input('category') == $category->slug ? 'open' : '' }}">
+                        @php
+                          $isActiveCategory =
+                            request()->input('category') == $category->slug ||
+                            (isset($selected_category) && $selected_category && $selected_category->id == $category->id);
+                        @endphp
+                        <li class="list-dropdown {{ $isActiveCategory ? 'open' : '' }}">
                           <a class="category" href="#" data-slug="{{ $category->slug }}">{{ $category->name }}
                             <span class="qty">({{ $category_count }})</span></a>
 

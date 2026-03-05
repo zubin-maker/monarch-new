@@ -597,7 +597,7 @@ function addToCartDetails() {
                 $("#quickViewModal").modal('hide');
                 $("#variationModal").modal('hide');
                 $("#cartIconWrapper").load(location.href + " #cartIconWrapper>*", "");
-                cartDropdown();
+                openMiniCartOffcanvas();
             } else {
                 toastr["error"](res.error);
             }
@@ -630,7 +630,7 @@ function addToCartDetails2() {
                 $("#quickViewModal").modal('hide');
                 $("#variationModal").modal('hide');
                 $("#cartIconWrapper").load(location.href + " #cartIconWrapper>*", "");
-                cartDropdown();
+                openMiniCartOffcanvas();
             } else {
                 toastr["error"](res.error);
             }

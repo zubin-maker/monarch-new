@@ -838,41 +838,19 @@ use Illuminate\Support\Str;
 @endphp
  
  @foreach($gallery as $image)
-<div class="col-md-3">
-  <div class="gallery-box position-relative">
-    <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid gallery-img">
-          <div class="hotspot" style="top: 20%; left: 30%;">
-          <span class="dot"></span>
-          <div class="popup">
-               <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid mb-2">
-            <h6>{{ $image->category_name }}</h6>
-            <p>{{ Str::limit($image->item_title, 6) }}</p>
-             <a href="{{ route('front.user.productDetails', ['slug' => $image->item_slug]) }}" class="btn btn-sm btn-primary">View Product</a>
-          </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="{{ route('front.user.productDetails', ['slug' => $image->item_slug]) }}" class="text-decoration-none">
+      <div class="gallery-box position-relative bg-white">
+        <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid gallery-img" alt="{{ $image->item_title }}">
+        <div class="p-3">
+          @if(!empty($image->category_name))
+            <p class="mb-1 text-muted small">{{ $image->category_name }}</p>
+          @endif
+          <h6 class="mb-0 text-dark">{{ Str::limit($image->item_title, 40) }}</h6>
         </div>
-
-        <div class="hotspot" style="top: 50%; left: 60%;">
-          <span class="dot"></span>
-            <div class="popup">
-               <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid mb-2">
-            <h6>{{ $image->category_name }}</h6>
-           <p>{{ Str::limit($image->item_title, 6) }}</p>
-             <a href="{{ route('front.user.productDetails', ['slug' => $image->item_slug]) }}" class="btn btn-sm btn-primary">View Product</a>
-          </div>
-        </div>
-
-        <div class="hotspot" style="top: 80%; left: 40%;">
-          <span class="dot"></span>
-             <div class="popup">
-               <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid mb-2">
-            <h6>{{ $image->category_name }}</h6>
-           <p>{{ Str::limit($image->item_title, 6) }}</p>
-             <a href="{{ route('front.user.productDetails', ['slug' => $image->item_slug]) }}" class="btn btn-sm btn-primary">View Product</a>
-          </div>
-        </div>
-     
+      </div>
+    </a>
   </div>
-</div>
 @endforeach
   </div>
 </section>

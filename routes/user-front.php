@@ -32,9 +32,12 @@ if (array_key_exists('host', $parsedUrl)) {
 
 
 //  Route::get('/', 'UserFront\HomeController@userDetailView')->name('front.user.detail.view');
- Route::get('/shop', 'UserFront\ShopController@Shop')->name('front.user.shop');
-// routes/web.php
-Route::get('/product-category/{category?}','UserFront\ShopController@Shop')->name('front.user.shop');
+
+// Single canonical shop route:
+// /product-category           → all products
+// /product-category/{slug}    → specific category (e.g. desk-tables)
+Route::get('/product-category/{category?}', 'UserFront\ShopController@Shop')
+    ->name('front.user.shop');
  Route::get('/about', 'UserFront\HomeController@userAbout')->name('front.user.about');
  Route::get('/blog', 'UserFront\HomeController@userBlogs')->name('front.user.blogs');
  Route::get('/blog-details/{slug}', 'UserFront\HomeController@userBlogDetail')->name('user-front.blog_details');

@@ -37,7 +37,7 @@
 <script src="{{ asset('assets/user-front/js/shop.js') }}?v=1"></script>
 
 <script src="{{ asset('assets/user-front/js/script.js') }}?v=1"></script>
-<script src="{{ asset('assets/user-front/js/cart.js') }}?v=1"></script>
+<script src="{{ asset('assets/user-front/js/cart.js') }}?v=3"></script>
 
 @if (session()->has('success'))
   <script>
