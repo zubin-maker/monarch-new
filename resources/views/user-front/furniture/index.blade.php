@@ -66,6 +66,12 @@
     object-position: center;
 }
 
+/* Hack: zoom padded 26years image without re-exporting */
+.monarch-item img[src$="26years.png"] {
+    transform: scale(1.8);
+    transform-origin: center;
+}
+
 .monarch-item {
     box-shadow: 0px 5px 30px rgba(49, 49, 49, 0.1);
 }
@@ -500,10 +506,13 @@ section.vectary_iframe {
 @endphp
 @section('content')
   @if ($ubs->slider_section == 1)
+  @php
+    $dynamicSliders = $sliders->where('is_static', 0);
+  @endphp
 
   <div class="slider">
 <div class="slides">
-    @foreach ($sliders->where('is_static', 0) as $slider)
+    @foreach ($dynamicSliders as $slider)
   <div class="slide">
     <img src="{{ asset('assets/front/img/hero_slider/' . $slider->img) }}" alt="Slide 1">
     <div class="d-flex align-items-center">
@@ -547,10 +556,9 @@ section.vectary_iframe {
 
     <!-- Dots -->
     <div class="dots">
-      <span class="dot active"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
+@foreach ($dynamicSliders as $index => $slider)
+      <span class="dot {{ $index === 0 ? 'active' : '' }}"></span>
+@endforeach
     </div>
   </div>
 
@@ -565,21 +573,24 @@ section.vectary_iframe {
     let slideInterval;
 
     function showSlide(n) {
+      if (!slides.length) return;
+      const safeIndex = ((n % slides.length) + slides.length) % slides.length;
+
       slides.forEach((slide, i) => {
-        slide.classList.toggle("active", i === n);
-        dots[i].classList.toggle("active", i === n);
+        slide.classList.toggle("active", i === safeIndex);
+        if (dots[i]) {
+          dots[i].classList.toggle("active", i === safeIndex);
+        }
       });
-      index = n;
+      index = safeIndex;
     }
 
     function nextSlide() {
-      index = (index + 1) % slides.length;
-      showSlide(index);
+      showSlide(index + 1);
     }
 
     function prevSlide() {
-      index = (index - 1 + slides.length) % slides.length;
-      showSlide(index);
+      showSlide(index - 1);
     }
 
     function autoSlide() {
@@ -587,15 +598,19 @@ section.vectary_iframe {
     }
 
     // Event listeners
-    next.addEventListener("click", () => {
-      nextSlide();
-      resetTimer();
-    });
+    if (next) {
+      next.addEventListener("click", () => {
+        nextSlide();
+        resetTimer();
+      });
+    }
 
-    prev.addEventListener("click", () => {
-      prevSlide();
-      resetTimer();
-    });
+    if (prev) {
+      prev.addEventListener("click", () => {
+        prevSlide();
+        resetTimer();
+      });
+    }
 
     dots.forEach((dot, i) => {
       dot.addEventListener("click", () => {
@@ -609,7 +624,8 @@ section.vectary_iframe {
       autoSlide();
     }
 
-    // Auto start
+    // Initialize
+    showSlide(0);
     autoSlide();
   </script>
 
@@ -662,7 +678,7 @@ section.vectary_iframe {
           <div class="card h-100 text-center monarch-item p-3">
             <img src="{{ asset('images/26years.png') }}" class="card-img-top mx-auto d-block" alt="26 Years of Excellence" style="max-width:120px;">
             <div class="card-body">
-              <h6 class="card-title">Having over 2 decades of industry experience in product innovation</h6>
+              <h6 class="card-title">Having over 3 decades of industry experience in product innovation</h6>
             </div>
           </div>
         </div>
@@ -860,17 +876,30 @@ use Illuminate\Support\Str;
 
 
 <section class="vectary_iframe space">
-<div class="section-title title-inline mb-20 d-flex flex-column">
-              <h2 class="title ">Explore Our Smart Height Adjustable Table In 3D
-                <span class="line left_right_slide_anim"></span>
-              </h2>
-              <p class="text">Experience innovation and comfort with our interactive 3D table view. </p>
-            </div>
+  <div class="section-title title-inline mb-20 d-flex flex-column">
+    <h2 class="title ">See Our Smart Height Adjustable Table In Action
+      <span class="line left_right_slide_anim"></span>
+    </h2>
+    <p class="text">Watch how easily you can move from sitting to standing and customize your perfect workspace.</p>
+  </div>
 
-
-<iframe src="https://app.vectary.com/p/7GAytti3sVmxHmta7FbSSx" frameborder="0" width="100%" height="350"></iframe>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <div class="video-frame rounded-3 shadow-sm">
+          <iframe
+            src="https://www.youtube.com/embed/zvz8wbUZyCw"
+            title="Height Adjustable Table Overview"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-  
+
 
   @if (count($after_video) > 0)
     @foreach ($after_video as $cusVideo)
@@ -1154,6 +1183,25 @@ use Illuminate\Support\Str;
 @section('styles')
   @parent
   <style>
+    .vectary_iframe .video-frame {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-top: 56.25%; /* 16:9 */
+      overflow: hidden;
+      background: #000;
+    }
+
+    .vectary_iframe .video-frame iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
     /* Ensure category icon tweaks override theme CSS */
     .category-2 .category-item .category-icon,
     .category-2 .category-item .category-icon::after {

@@ -176,24 +176,14 @@ font-size: 14px;
                             <a class="nav-link " target="_self" href="{{ route('front.user.shop') }}">Shop <i
                                     class="fal fa-plus"></i></a>
                             <ul class="submenu">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('front.user.shop', 'office-chairs') }}"
-                                        target="_self">
-                                        Office Chairs
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('front.user.shop', 'desk-tables') }}"
-                                        target="_self">
-                                        Height Adjustable Tables
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('front.user.shop', 'gaming-chair') }}"
-                                        target="_self">
-                                        Gaming Chair
-                                    </a>
-                                </li>
+                                @foreach (($categories ?? collect())->take(10) as $category)
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('front.user.shop', $category->slug) }}"
+                                            target="_self">
+                                            {{ convertUtf8($category->name) }}
+                                        </a>
+                                    </li>
+                                @endforeach
                             </ul>
                         </li>
 

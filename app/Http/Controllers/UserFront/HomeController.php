@@ -59,6 +59,7 @@ class HomeController extends Controller
 
         $data['sliders'] = HeroSlider::where('language_id', 17)
             ->where('user_id', 11)
+            ->orderBy('serial_number', 'asc')
             ->get();
         $data['hero_slider'] = BasicExtende::where('user_id', 11)
             ->where('language_id', 17)

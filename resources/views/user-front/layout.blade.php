@@ -188,6 +188,41 @@
       color: #666;
     }
 
+    .bulk-order-float-btn {
+      position: fixed;
+      right: 20px;
+      bottom: 90px;
+      z-index: 1050;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #25aae1;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .bulk-order-float-btn:hover {
+      background: #1c8bb5;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    @media (max-width: 576px) {
+      .bulk-order-float-btn {
+        right: 16px;
+        bottom: 80px;
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+
     .mini-cart-cta-btn {
       display: inline-flex;
       justify-content: center;
@@ -421,6 +456,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- WhatsApp Chat Button -->
   <div id="WAButton"></div>
+
+  <!-- Bulk Order Floating Button -->
+  <a href="{{ route('customer.bulkOrder') }}" class="bulk-order-float-btn">
+    <i class="fal fa-box-open"></i>
+    <span>Bulk Order</span>
+  </a>
 
   @includeif('user-front.scripts')
   @yield('scripts')

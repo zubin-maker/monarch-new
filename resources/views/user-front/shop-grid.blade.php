@@ -119,69 +119,9 @@
               @endif
             @endif
           </div>
-@php
-    $features = is_string($item->features ?? '') 
-                ? json_decode($item->features, true) 
-                : ($item->features ?? []);
-@endphp
-
-@if(is_array($features) && count($features) > 0)
-    <ul class="product-bullets mt-2">
-        @foreach($features as $feature)
-            @if(trim($feature))
-                <li>{{ trim($feature) }}</li>
-            @endif
-        @endforeach
-    </ul>
-@endif
-           <!--@if(trim(strtoupper($item->title)) == 'NEXA MEDIUM BACK CHAIR')-->
-           <!--   <ul class="product-bullets mt-2">-->
-           <!--     <li>Orthopedic chair for extended hours of back support</li>-->
-           <!--     <li>Smart grid cushioning in backrest and seat</li>-->
-           <!--     <li>10 years warranty</li>-->
-           <!--   </ul>-->
-           <!-- @endif-->
 
         </div>
 
-        <div class="btn-icon-group btn-inline">
-
-          @if ($shop_settings->catalog_mode != 1)
-            <a class=" btn btn-icon radius-sm cart-link cursor-pointer d-none" data-title="{{ $item->title }}"
-              data-current_price="{{ currency_converter($product_current_price) }}" data-item_id="{{ $item->item_id }}"
-              data-language_id="{{ $uLang }}" data-totalVari="{{ check_variation($item->item_id) }}"
-              data-variations="{{ check_variation($item->item_id) > 0 ? 'yes' : null }}"
-              data-href="{{ route('front.user.add.cart', ['id' => $item->item_id, getParam()]) }}"
-              data-bs-toggle="tooltip" data-bs-placement="top"
-              title="{{ $keywords['Shop_Now'] ?? __('Shop Now') }}"><i class="far fa-shopping-cart "></i></a>
-          @endif
-          
-
-          <button type="button" class="btn btn-icon radius-sm quick-view-link" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ $keywords['Quick View'] ?? __('Quick View') }}" data-bs-toggle="modal"
-            data-bs-target="#quickViewModal" data-item_id="{{ $item->item_id }}" data-slug="{{ $item->product_slug }}"
-            data-url="{{ route('front.user.productDetails.quickview', ['slug' => $item->product_slug, getParam()]) }}">
-            <i class="fal fa-eye"></i>
-          </button>
-
-          <a class="btn btn-icon radius-sm"
-            onclick="addToCompare('{{ route('front.user.add.compare', ['id' => $item->item_id, getParam()]) }}')"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $keywords['Compare'] ?? __('Compare') }}"><i
-              class="fal fa-random"></i></a>
-          @php
-            $customer_id = Auth::guard('customer')->check() ? Auth::guard('customer')->user()->id : null;
-            $checkWishList = $customer_id ? checkWishList($item->item_id, $customer_id) : false;
-          @endphp
-          <a class="btn btn-icon radius-sm btn-wish {{ $checkWishList ? 'remove-wish active' : 'add-to-wish' }}"
-            data-url="{{ route('front.user.add.wishlist', ['id' => $item->item_id, getParam()]) }}"
-            data-removeurl="{{ route('front.user.remove.wishlist', ['id' => $item->item_id, getParam()]) }}"
-            data-bs-toggle="tooltip" data-bs-placement="top"
-            title="{{ $keywords['Add to Wishlist'] ?? __('Add to Wishlist') }}"><i class="fal fa-heart"></i></a>
-            
-         
-         
-
-        </div>
        <div>
          @if ($shop_settings->catalog_mode != 1)
               <a href="{{ route('front.user.productDetails', ['slug' => $item->product_slug]) }}"
