@@ -13,6 +13,14 @@
   <!--- For Social Media Share Thumbnail --->
 @endsection
 
+@section('structured_data')
+  @if (isset($itemlist_structured_data) && $itemlist_structured_data)
+    <script type="application/ld+json">
+    {!! $itemlist_structured_data !!}
+    </script>
+  @endif
+@endsection
+
 @section('content')
   <!-- Shop Start -->
   <div class="products space">

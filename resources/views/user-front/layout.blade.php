@@ -16,6 +16,7 @@
 
   <link rel="canonical" href="{{ canonicalUrl() }}">
   @yield('og-meta')
+  @yield('structured_data')
   @includeif('user-front.styles')
   @php
     $selLang = App\Models\Language::where('code', request()->input('language'))->first();

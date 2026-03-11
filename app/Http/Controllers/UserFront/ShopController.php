@@ -350,7 +350,37 @@ public function shop(Request $request, $categorySlug = null)
         ->paginate(12);
 
     // -----------------------------------------------------------------
-    // 5. Extra data for the view
+    // 5. ItemList structured data (built here so the view never touches $items)
+    // -----------------------------------------------------------------
+    $itemlistJson = null;
+    if ($items->count() > 0) {
+        $pageName = $categoryId ? UserItemCategory::find($categoryId)->name : (optional($this->getUserPageHeading($userCurrentLang))->shop_page ?? __('Shop'));
+        $seoRow = SEO::where('language_id', $uLang)->where('user_id', $user->id)->first();
+        $description = ($seoRow && ! empty($seoRow->shop_meta_description)) ? $seoRow->shop_meta_description : 'Shop ergonomic office products including chairs, desks and accessories.';
+        $listElements = $items->map(function ($item, $index) use ($items) {
+            $position = ($items->currentPage() - 1) * $items->perPage() + $index + 1;
+            return [
+                '@type'    => 'ListItem',
+                'position' => $position,
+                'url'      => route('front.user.productDetails', ['slug' => $item->product_slug]),
+            ];
+        })->values();
+        $itemlistJson = json_encode([
+            '@context'    => 'https://schema.org',
+            '@type'       => 'CollectionPage',
+            'name'        => $pageName,
+            'url'         => url()->current(),
+            'description' => $description,
+            'mainEntity'  => [
+                '@type'         => 'ItemList',
+                'numberOfItems' => $items->total(),
+                'itemListElement' => $listElements,
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    // -----------------------------------------------------------------
+    // 6. Extra data for the view
     // -----------------------------------------------------------------
     $data = [
         'pageHeading'               => $this->getUserPageHeading($userCurrentLang),
@@ -359,6 +389,7 @@ public function shop(Request $request, $categorySlug = null)
         'selected_subcategory'      => $subcategoryId ? UserItemSubCategory::find($subcategoryId) : null,
         'variants'                  => $variants,
         'items'                     => $items,
+        'itemlist_structured_data'   => $itemlistJson,
         'symbol'                    => $userSelectedCurr->symbol ?? $userDefaultCurr->symbol,
         'minPrice'                  => UserItem::where('status', 1)->where('user_id', $user->id)->min('current_price'),
         'maxPrice'                  => UserItem::where('status', 1)->where('user_id', $user->id)->max('current_price'),

@@ -2,13 +2,65 @@
 
 
 <style>
-    
     .Shop_by{
-font-size: 14px;
-}
+        font-size: 14px;
+    }
+
+    .top-promo-bar {
+        background: #25aae1;
+        color: #ffffff;
+        font-size: 14px;
+        padding: 6px 0;
+    }
+
+    .top-promo-bar-text {
+        margin: 0;
+    }
+
+    .top-promo-bar-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        color: #25aae1 !important;
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+    }
+
+    .top-promo-bar-btn:hover {
+        background: #f3f4f6;
+        color: #1b7ea5 !important;
+    }
+
+    @media (max-width: 575.98px) {
+        .top-promo-bar {
+            font-size: 13px;
+        }
+        .top-promo-bar-btn {
+            margin-top: 4px;
+        }
+    }
 </style>
 
 <header class="header header-fixed">
+    <!-- Very Top Promo Bar -->
+    <div class="top-promo-bar d-none d-md-block">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
+                <p class="top-promo-bar-text mb-0">
+                    Looking for workspace solutions for your office?
+                </p>
+                <a href="https://www.monarchergo.com/" target="_blank" rel="noopener noreferrer" class="top-promo-bar-btn">
+                    Visit Monarch Ergo Corporate Website
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Navbar -->
     <div class="mobile-navbar d-block d-xl-none">
         <div class="container">
@@ -50,11 +102,6 @@ font-size: 14px;
                         </ul>
                     </div>
                 </div>
-                <!-- <div class="col-xl-5 col-lg-4">
-          <div class="header-center text-center">
-           <p class="m-0">{{ $header->header_middle_text ?? '' }}</p>
-          </div>
-        </div> -->
                 <div class="col-xl-6 col-lg-6 text-end">
                     <div class="header-right">
                         <ul class="menu justify-content-end ">

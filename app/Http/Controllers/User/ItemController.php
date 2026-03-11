@@ -64,6 +64,88 @@ class ItemController extends Controller
         return view('user.item.index', $data);
     }
 
+    public function export(Request $request)
+    {
+        $userId = Auth::guard('web')->user()->id;
+
+        $lang = Language::where('code', $request->language)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+        $langId = $lang->id;
+
+        $title = $request->filled('title') ? $request->title : null;
+
+        $rows = DB::table('user_items')
+            ->where('user_items.user_id', $userId)
+            ->join('user_item_contents', 'user_items.id', '=', 'user_item_contents.item_id')
+            ->join('user_item_categories', 'user_item_contents.category_id', '=', 'user_item_categories.id')
+            ->select(
+                'user_items.id as item_id',
+                'user_items.type',
+                'user_items.sku',
+                'user_items.stock',
+                'user_items.current_price',
+                'user_items.previous_price',
+                'user_items.status',
+                'user_items.is_feature',
+                'user_items.created_at',
+                'user_item_contents.title',
+                'user_item_contents.slug',
+                'user_item_categories.name as category'
+            )
+            ->where('user_item_contents.language_id', $langId)
+            ->where('user_item_categories.language_id', $langId)
+            ->when($title, function ($query) use ($title) {
+                return $query->where('user_item_contents.title', 'LIKE', '%' . $title . '%');
+            })
+            ->orderByDesc('user_items.id')
+            ->get();
+
+        $filename = 'items-' . $lang->code . '-' . date('Y-m-d') . '.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $out = fopen('php://output', 'w');
+
+            fputcsv($out, [
+                'item_id',
+                'title',
+                'slug',
+                'product_url',
+                'category',
+                'type',
+                'sku',
+                'stock',
+                'current_price',
+                'previous_price',
+                'status',
+                'featured',
+                'created_at',
+            ]);
+
+            foreach ($rows as $r) {
+                fputcsv($out, [
+                    $r->item_id,
+                    $r->title,
+                    $r->slug,
+                    route('front.user.productDetails', ['slug' => $r->slug]),
+                    $r->category,
+                    $r->type,
+                    $r->sku,
+                    $r->stock,
+                    $r->current_price,
+                    $r->previous_price,
+                    $r->status,
+                    $r->is_feature,
+                    $r->created_at,
+                ]);
+            }
+
+            fclose($out);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
 
     public function type(Request $request)
     {

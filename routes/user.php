@@ -525,6 +525,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'userstatus', 'Demo',
 
         Route::prefix('items')->group(function () {
             Route::get('/', 'User\ItemController@index')->name('user.item.index');
+            Route::get('/export', 'User\ItemController@export')->name('user.item.export');
             Route::get('/type', 'User\ItemController@type')->name('user.item.type');
             Route::get('/create', 'User\ItemController@create')->name('user.item.create');
             Route::post('/store', 'User\ItemController@store')->name('user.item.store')->middleware('limitCheck:items,store');

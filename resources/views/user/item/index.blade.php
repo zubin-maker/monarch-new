@@ -82,6 +82,10 @@
               </div>
             </div>
             <div class="col-lg-3 mt-2 mt-lg-0">
+              <a href="{{ route('user.item.export') . '?language=' . request()->input('language') . (request()->filled('title') ? '&title=' . urlencode(request()->input('title')) : '') }}"
+                class="btn btn-secondary float-right btn-sm mr-2">
+                <i class="fas fa-download"></i> {{ __('Export CSV') }}
+              </a>
               <a href="{{ route('user.item.create') . '?language=' . $default->code . '&type=physical' }}" class="btn btn-primary float-right btn-sm"><i
                   class="fas fa-plus"></i> {{ __('Add Item') }}</a>
               <button class="btn btn-danger float-right btn-sm mr-2 d-none bulk-delete"

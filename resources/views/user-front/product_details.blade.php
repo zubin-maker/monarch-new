@@ -121,6 +121,61 @@
     </style>
 @endsection
 
+@section('structured_data')
+    @php
+        $productCategory = $product->category_id ? \App\Models\User\UserItemCategory::find($product->category_id) : null;
+        $categoryName = $productCategory->name ?? '';
+        $flashInfo = flashAmountStatus($product->item_id, $product->item->current_price);
+        $displayPrice = $flashInfo['amount'];
+        $realReviewCount = reviewCount($product->item->id);
+        $fakeReviewCount = $product->item->fake_review_count ?? 0;
+        $totalReviewCount = $realReviewCount + $fakeReviewCount;
+        $avgRating = (float) \App\Models\User\UserItemReview::where('item_id', $product->item->id)->avg('review');
+        if ($totalReviewCount > 0 && $avgRating == 0) {
+            $avgRating = (float) ($product->item->rating ?? 0);
+        }
+        $currencyCode = $userCurrentCurr->code ?? 'INR';
+        $productUrl = route('front.user.productDetails', ['slug' => $product->slug]);
+        $mainImage = asset('assets/front/img/user/items/thumbnail/' . $product->item->thumbnail);
+        $brandName = $userBs->website_title ?? $user->username ?? 'Monarch Ergo';
+    @endphp
+    <script type="application/ld+json">
+    {!! json_encode(array_filter([
+        '@context' => 'https://schema.org/',
+        '@type' => 'Product',
+        'name' => $product->title,
+        'url' => $productUrl,
+        'description' => $product->meta_description ?? $product->summary ?? strip_tags(\Illuminate\Support\Str::limit($product->description, 500)),
+        'brand' => [
+            '@type' => 'Brand',
+            'name' => $brandName,
+        ],
+        'category' => $categoryName ?: null,
+        'image' => [$mainImage],
+        'sku' => $product->item->sku ?? null,
+        'offers' => [
+            '@type' => 'Offer',
+            'url' => $productUrl,
+            'priceCurrency' => $currencyCode,
+            'price' => (string) round(currency_converter($displayPrice), 2),
+            'priceValidUntil' => date('Y') . '-12-31',
+            'availability' => ($product->item->stock ?? 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'itemCondition' => 'https://schema.org/NewCondition',
+            'seller' => [
+                '@type' => 'Organization',
+                'name' => $brandName,
+                'url' => config('app.url'),
+            ],
+        ],
+        'aggregateRating' => $totalReviewCount > 0 ? [
+            '@type' => 'AggregateRating',
+            'ratingValue' => (string) number_format($avgRating, 1),
+            'reviewCount' => (string) $totalReviewCount,
+        ] : null,
+    ], fn ($v) => $v !== null && $v !== ''), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+@endsection
+
 @section('content')
 <div class="product-single pt-100 pb-70 overflow-hidden">
     <div class="container">
