@@ -114,9 +114,56 @@
         .slider-thumbnails2 .thumbnail-img:hover {
             opacity: 0.9;
         }
-        
+
         .page-title-area{
             display:none !important;
+        }
+
+        /* Certification strip above product name */
+        .product-cert-strip {
+            background-color: #00c8fa;
+            border-radius: 18px;
+            padding: 10px 18px;
+            color: #ffffff;
+        }
+        .product-cert-strip .cert-item + .cert-item {
+            border-left: 1px solid rgba(255,255,255,0.15);
+        }
+        .product-cert-strip .cert-item {
+            padding: 0 10px;
+        }
+        .product-cert-strip .cert-icon {
+            height: 76px;
+            width: 76px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 4px;
+        }
+        .product-cert-strip .cert-icon img {
+            max-height: 48px;
+            max-width: 48px;
+            object-fit: contain;
+            display: block;
+        }
+        .product-cert-strip .cert-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        @media (max-width: 575.98px) {
+            .product-cert-strip {
+                padding: 8px 10px;
+                border-radius: 14px;
+            }
+            .product-cert-strip .cert-label {
+                font-size: 12px;
+            }
+            .product-cert-strip .cert-icon {
+                height: 64px;
+                width: 64px;
+            }
         }
     </style>
 @endsection
@@ -233,6 +280,28 @@
                 <!-- Product Details Column -->
                 <div class="col-lg-6">
                     <div class="product-single-details">
+                        <!-- Certification Strip -->
+                        <div class="product-cert-strip d-flex align-items-center justify-content-between mb-3">
+                            <div class="cert-item text-center flex-fill">
+                                <div class="cert-icon">
+                                    <img src="{{ asset('assets/front/img/certs/bifma.svg') }}" alt="BIFMA Certified">
+                                </div>
+                                <div class="cert-label">BIFMA Certified</div>
+                            </div>
+                            <div class="cert-item text-center flex-fill">
+                                <div class="cert-icon">
+                                    <img src="{{ asset('assets/front/img/certs/iso.svg') }}" alt="ISO Certified">
+                                </div>
+                                <div class="cert-label">ISO Certified</div>
+                            </div>
+                            <div class="cert-item text-center flex-fill">
+                                <div class="cert-icon">
+                                    <img src="{{ asset('assets/front/img/certs/10-year1.png') }}" alt="10 Year Warranty">
+                                </div>
+                                <div class="cert-label">10 Year Warranty</div>
+                            </div>
+                        </div>
+
                         <!-- Title & Label -->
                         @php
                             $item_label = DB::table('labels')->where('id', $product->label_id)->first();

@@ -854,7 +854,7 @@ use Illuminate\Support\Str;
 @endphp
  
  @foreach($gallery as $image)
-  <div class="col-6 col-md-4 col-lg-2">
+  <div class="col-6 col-md-4 col-lg-3">
     <a href="{{ route('front.user.productDetails', ['slug' => $image->item_slug]) }}" class="text-decoration-none">
       <div class="gallery-box position-relative bg-white">
         <img src="{{ asset('uploads/gallery/'.$image->image) }}" class="img-fluid gallery-img" alt="{{ $image->item_title }}">

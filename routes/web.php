@@ -26,6 +26,11 @@ Route::get('myfatoorah/cancel', 'MyFatoorahController@cancel')->name('myfatoorah
 Route::get('/invoice', 'Front\FrontendController@invoice')
     ->name('front.invoice');
 
+// Temporary test route to preview the customer payment success page directly
+Route::get('/test-success-view', function () {
+    return view('user-front.success');
+});
+
 Route::domain($domain)->group(function () {
     Route::get('/changelanguage/{lang}', 'Front\FrontendController@changeLanguage')->name('changeLanguage');
 

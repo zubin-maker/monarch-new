@@ -21,66 +21,60 @@
                     <form method="POST" action="{{ route('bulk-inquiry.store') }}">
                         @csrf
 
-                        {{-- Phone + Email --}}
-                        <div class="row g-4 mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number *</label>
-                                <input type="text" name="phone" value="{{ old('phone') }}" required
-                                       class="form-control p-3 rounded-3" placeholder="+91 98765 43210">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Email Address *</label>
-                                <input type="email" name="email" value="{{ old('email') }}" required
-                                       class="form-control p-3 rounded-3" placeholder="corporate@company.com">
-                            </div>
+                        {{-- Name --}}
+                        <div class="mb-3">
+                            <label class="form-label">Your Name *</label>
+                            <input type="text" name="name" value="{{ old('name') }}" required
+                                   class="form-control p-3 rounded-3" placeholder="Your full name">
                         </div>
 
-                        {{-- Products Section --}}
-                        <div class="mt-5">
-                            <h4 class="fw-bold mb-3">Products You're Interested In</h4>
+                        {{-- Email --}}
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" value="{{ old('email') }}" required
+                                   class="form-control p-3 rounded-3" placeholder="you@example.com">
+                        </div>
 
-                            <div id="products-container">
+                        {{-- Mobile --}}
+                        <div class="mb-3">
+                            <label class="form-label">Mobile *</label>
+                            <input type="text" name="phone" value="{{ old('phone') }}" required
+                                   class="form-control p-3 rounded-3" placeholder="+91 98765 43210">
+                        </div>
 
-                                {{-- First Product Row --}}
+                        {{-- Company --}}
+                        <div class="mb-3">
+                            <label class="form-label">Company *</label>
+                            <input type="text" name="company" value="{{ old('company') }}" required
+                                   class="form-control p-3 rounded-3" placeholder="Company name">
+                        </div>
 
-                                            <div class="product-row row g-3 align-items-end mb-3">
-                <div class="col-md-4">
-                    <select name="category[]" class="form-select p-3 rounded-3 category-select" required>
-                        <option value="">Select Category</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select name="product[]" class="form-select p-3 rounded-3" required>
-                        <option value="">Select Product</option>
-                        @foreach($items as $item)
-                            <option value="{{ $item->id }}">{{ \Illuminate\Support\Str::limit($item->title, 30) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="quantity[]" min="1" placeholder="Qty"
-                           class="form-control p-3 rounded-3 text-center" required>
-                </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn remove-row text-danger fs-3 lh-1">&times;</button>
-                </div>
-            </div>
+                        {{-- City --}}
+                        <div class="mb-3">
+                            <label class="form-label">City *</label>
+                            <select name="city" class="form-select p-3 rounded-3 no-nice-select" required>
+                                <option value="">Select City</option>
+                                <option value="Mumbai" {{ old('city') == 'Mumbai' ? 'selected' : '' }}>Mumbai</option>
+                                <option value="Delhi" {{ old('city') == 'Delhi' ? 'selected' : '' }}>Delhi</option>
+                                <option value="Bengaluru" {{ old('city') == 'Bengaluru' ? 'selected' : '' }}>Bengaluru</option>
+                                <option value="Hyderabad" {{ old('city') == 'Hyderabad' ? 'selected' : '' }}>Hyderabad</option>
+                                <option value="Chennai" {{ old('city') == 'Chennai' ? 'selected' : '' }}>Chennai</option>
+                                <option value="Other" {{ old('city') == 'Other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
-                            </div>
-
-                            <button type="button" id="add-product" class="btn btn-link text-primary mt-2">
-                                <i class="bi bi-plus-circle"></i> Add another product
-                            </button>
+                        {{-- Comment --}}
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea name="comment" rows="3"
+                                      class="form-control p-3 rounded-3"
+                                      placeholder="Tell us a bit about your requirement (workspace size, timelines, etc.)">{{ old('comment') }}</textarea>
                         </div>
 
                         {{-- Submit --}}
                         <div class="mt-5">
                             <button type="submit" class="btn btn-primary w-100 py-3 fs-5 rounded-3">
-                                Submit Inquiry
+                                Send
                             </button>
                         </div>
 
@@ -98,50 +92,19 @@
         outline: none !important;
         box-shadow: none !important;
     }
+
+    /* hide original browser arrow when Nice Select is active, but keep plain select for .no-nice-select */
+    .nice-select + select.no-nice-select {
+        display: none !important;
+    }
 </style>
 
 {{-- Scripts --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-
-    // Add new product row
-    $('#add-product').click(function() {
-        let productRow = `
-            <div class="product-row row g-3 align-items-end mb-3">
-                <div class="col-md-4">
-                    <select name="category[]" class="form-select p-3 rounded-3 category-select" required>
-                        <option value="">Select Category</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select name="product[]" class="form-select p-3 rounded-3" required>
-                        <option value="">Select Product</option>
-                        @foreach($items as $item)
-                            <option value="{{ $item->id }}">{{ \Illuminate\Support\Str::limit($item->title, 30) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="quantity[]" min="1" placeholder="Qty"
-                           class="form-control p-3 rounded-3 text-center" required>
-                </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn remove-row text-danger fs-3 lh-1">&times;</button>
-                </div>
-            </div>
-        `;
-        $('#products-container').append(productRow);
-    });
-
-    // Remove product row
-    $(document).on('click', '.remove-row', function() {
-        $(this).closest('.product-row').remove();
-    });
-
+    // Destroy Nice Select for the city dropdown so it looks like a normal select
+    $('select.no-nice-select').niceSelect('destroy');
 });
 </script>
 
