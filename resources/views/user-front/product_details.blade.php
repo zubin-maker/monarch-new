@@ -121,36 +121,40 @@
 
         /* Certification strip above product name */
         .product-cert-strip {
-            background-color: #00c8fa;
+            background-color: transparent;
+            border: 2px solid #00c8fa;
             border-radius: 18px;
             padding: 10px 18px;
-            color: #ffffff;
+            color: #000000;
         }
         .product-cert-strip .cert-item + .cert-item {
-            border-left: 1px solid rgba(255,255,255,0.15);
+            border-left: 2px solid #00c8fa;
         }
         .product-cert-strip .cert-item {
             padding: 0 10px;
         }
         .product-cert-strip .cert-icon {
             height: 76px;
-            width: 76px;
+            width: 100%;
             border-radius: 50%;
             background-color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 4px;
+            margin: 0 auto;
         }
         .product-cert-strip .cert-icon img {
-            max-height: 48px;
-            max-width: 48px;
+            height: 100%;
+            width: auto;
+            max-height: 100%;
+            max-width: 100%;
             object-fit: contain;
             display: block;
         }
         .product-cert-strip .cert-label {
             font-size: 13px;
             font-weight: 500;
+            color: #000000;
         }
         @media (max-width: 575.98px) {
             .product-cert-strip {
@@ -284,9 +288,9 @@
                         <div class="product-cert-strip d-flex align-items-center justify-content-between mb-3">
                             <div class="cert-item text-center flex-fill">
                                 <div class="cert-icon">
-                                    <img src="{{ asset('assets/front/img/certs/bifma.svg') }}" alt="BIFMA Certified">
+                                    <img src="{{ asset('assets/front/img/certs/logoes.png') }}" alt="BIFMA Certified">
                                 </div>
-                                <div class="cert-label">BIFMA Certified</div>
+                                <div class="cert-label">BIFMA/ANSI Certified</div>
                             </div>
                             <div class="cert-item text-center flex-fill">
                                 <div class="cert-icon">
@@ -296,7 +300,8 @@
                             </div>
                             <div class="cert-item text-center flex-fill">
                                 <div class="cert-icon">
-                                    <img src="{{ asset('assets/front/img/certs/10-year1.png') }}" alt="10 Year Warranty">
+                                    <!-- <img src="{{ asset('assets/front/img/certs/10-year1.png') }}" alt="10 Year Warranty"> -->
+                                    <img src="{{ asset('assets/front/img/certs/10-year.png') }}" alt="10 Year Warranty">
                                 </div>
                                 <div class="cert-label">10 Year Warranty</div>
                             </div>

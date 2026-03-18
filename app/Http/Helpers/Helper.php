@@ -971,6 +971,12 @@ if (!function_exists('paytabInfo')) {
 if (!function_exists('detectTextDirection')) {
     function detectTextDirection($text)
     {
+        // Fallback if intl extension (IntlChar) is not installed:
+        // treat everything as left-to-right so invoice generation does not crash.
+        if (!class_exists('IntlChar')) {
+            return 'ltr';
+        }
+
         $length = mb_strlen($text, 'UTF-8');
         $rtlCount = 0;
         $ltrCount = 0;

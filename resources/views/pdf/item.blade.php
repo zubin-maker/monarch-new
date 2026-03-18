@@ -15,7 +15,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{{ __('Invoice') }}</title>
-  <link rel="stylesheet" href="{{ asset('assets/front/css/design-pdf.css') }}">
+  <link rel="stylesheet" href="{{ public_path('assets/front/css/design-pdf.css') }}">
   @php
     $font_family = 'DejaVu Sans, serif';
 
@@ -107,10 +107,10 @@
           <div class="invoice-header clearfix mb-15 px-25">
             <div class="float-left">
               @if ($userBs->logo)
-                <img src="{{ asset('/assets/front/img/user/' . $userBs->logo) }}" height="40"
+                <img src="{{ public_path('assets/front/img/user/' . $userBs->logo) }}" height="40"
                   class="d-inline-block ">
               @else
-                <img src="{{ asset('assets/admin/img/noimage.jpg') }}" height="40" class="d-inline-block">
+                <img src="{{ public_path('assets/admin/img/noimage.jpg') }}" height="40" class="d-inline-block">
               @endif
             </div>
             <div class="text-right strong invoice-heading float-right"

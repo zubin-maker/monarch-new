@@ -461,9 +461,9 @@ class Common
         $data['order']  = $order;
         $pdf = PDF::setOptions([
             'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-            'logOutputFile' => storage_path('logs/log.htm'),
-            'tempDir' => storage_path('logs/')
+            // Avoid deadlocks/timeouts with `php artisan serve` by preventing HTTP asset fetching.
+            // The invoice view uses local filesystem paths for CSS/images.
+            'isRemoteEnabled' => false
         ])->loadView('pdf.item', $data)->save($path);
         UserOrder::where('id', $order->id)->update([
             'invoice_number' => $fileName
