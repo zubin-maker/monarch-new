@@ -122,7 +122,7 @@
         /* Certification strip above product name */
         .product-cert-strip {
             background-color: transparent;
-            border: 2px solid #00c8fa;
+            border: 4px solid #00c8fa;
             border-radius: 18px;
             padding: 10px 18px;
             color: #000000;
@@ -135,7 +135,7 @@
         }
         .product-cert-strip .cert-icon {
             height: 76px;
-            width: 100%;
+            width: 55%;
             border-radius: 50%;
             background-color: #ffffff;
             display: flex;
