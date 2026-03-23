@@ -26,6 +26,20 @@ Route::get('myfatoorah/cancel', 'MyFatoorahController@cancel')->name('myfatoorah
 Route::get('/invoice', 'Front\FrontendController@invoice')
     ->name('front.invoice');
 
+    //mail test route
+    Route::get('/test-mail', function () {
+        try {
+            Mail::raw('This is a test email from Laravel.', function ($message) {
+                $message->to('zubinchadha@gmail.com') // change this
+                        ->subject('Laravel Test Mail');
+            });
+    
+            return 'Mail sent successfully';
+        } catch (\Exception $e) {
+            return 'Mail failed: ' . $e->getMessage();
+        }
+    });
+
 // Temporary test route to preview the customer payment success page directly
 Route::get('/test-success-view', function () {
     return view('user-front.success');

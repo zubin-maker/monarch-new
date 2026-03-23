@@ -444,25 +444,48 @@ class FrontendController extends Controller
  public function bulckInquiryStore(Request $request)
     {
         $request->validate([
-            'phone'          => 'required|string|max:20',
-            'email'          => 'required|email',
-            'category.*'     => 'required',
-            'product.*'      => 'required',
-            'quantity.*'     => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+            'company' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'comment' => 'nullable|string|max:2000',
         ]);
-         $phone = $request->phone;
-    $email = $request->email;
 
+        // Keep DB insert working with the existing `bulk-order` table columns.
+        // (The frontend form currently doesn't submit product/category/quantity.)
         BulkOrder::create([
-    'phone'       => $phone,
-    'email'       => $email,
-    'category_id' => json_encode($request->category),
-    'item_id'     => json_encode($request->product),
-    'quantity'    => json_encode($request->quantity),
-]);
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'category_id' => json_encode([]),
+            'item_id' => json_encode([]),
+            'quantity' => json_encode([]),
+        ]);
+
+        // Send mail to HR with the enquiry details.
+        $mailer = new MegaMailer();
+        $comment = $request->comment ? nl2br(e($request->comment)) : '';
+
+        $body = ''
+            . '<p><strong>Enquirer Name:</strong> ' . e($request->name) . '</p>'
+            . '<p><strong>Enquirer Mail:</strong> ' . e($request->email) . '</p>'
+            . '<p><strong>Mobile:</strong> ' . e($request->phone) . '</p>'
+            . '<p><strong>Company:</strong> ' . e($request->company) . '</p>'
+            . '<p><strong>City:</strong> ' . e($request->city) . '</p>';
+
+        if (!empty($comment)) {
+            $body .= '<p><strong>Comment:</strong><br>' . $comment . '</p>';
+        }
+
+        $mailer->mailContactMessage([
+            'toMail' => 'hr@monarchergo.com',
+            'toName' => 'HR',
+            'subject' => 'Bulk Order Inquiry',
+            'body' => $body,
+        ]);
 
 
-        return redirect()->back()->with('success', 'Thank you! We received your inquiry and will contact you within 24 hours.');
+        return redirect()->back()->with('bulk_order_success', 'Thank you! We will get back to you shortly.');
     }
     
 }

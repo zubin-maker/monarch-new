@@ -25,10 +25,10 @@
             <div class="row">
               <div class="col-12">
                 <div class="tab-content">
-                  <div class="tab-pane active">
-                    <div class="row">
+                    <div class="tab-pane active">
+                    <div class="row justify-content-center">
                       @for ($skeleton = 1; $skeleton <= 4; $skeleton++)
-                        <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="col-xl-3 col-lg-3 col-md-6">
                           <div class="product-default product-default-2 product-center mb-30">
                             <figure class="product-img skeleton skeleton-big-img"></figure>
                             <div class="product-details">
@@ -101,25 +101,27 @@
                   <div class="tab-content">
                     @for ($i = 0; $i < count($tabs); $i++)
                       <div class="tab-pane {{ $i == 0 ? 'active' : '' }}" id="{{ $tabs[$i]->slug }}">
-                        <div class="row">
+                        <div class="row justify-content-center">
 
                           @php
                             $products = json_decode($tabs[$i]->products, true);
                           @endphp
                           @if (!is_null($products))
                             @for ($j = 0; $j < count($products); $j++)
-                              <div class="col-xl-3 col-lg-4 col-md-6">
                                 @php
-                                  $product_details = \App\Models\User\UserItem::where('id', $products[$j])
-                                      ->with([
-                                          'itemContents' => function ($q) use ($uLang) {
-                                              $q->where('language_id', '=', $uLang);
-                                          },
-                                          'sliders',
-                                      ])
-                                      ->first();
-                                @endphp
-                                @if (!is_null(@$product_details->itemContents[0]->slug))
+                                $product_details = \App\Models\User\UserItem::where('id', $products[$j])
+                                    ->with([
+                                        'itemContents' => function ($q) use ($uLang) {
+                                            $q->where('language_id', '=', $uLang);
+                                        },
+                                        'sliders',
+                                    ])
+                                    ->first();
+                                $productTitle = @$product_details->itemContents[0]->title;
+                                  $isBanned = trim(strtoupper((string)@$productTitle)) === '4E';
+                              @endphp
+                              <div class="col-xl-3 col-lg-3 col-md-6 {{ $isBanned ? 'd-none' : '' }}">
+                                @if (!$isBanned && !is_null(@$product_details->itemContents[0]->slug))
                                   <div class="product-default product-default-2 product-center mb-30">
                                     <figure class="product-img">
                                       <a href="{{ route('front.user.productDetails', ['slug' => $product_details->itemContents[0]->slug]) }}"

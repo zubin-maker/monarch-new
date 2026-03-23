@@ -39,6 +39,9 @@
 <script src="{{ asset('assets/user-front/js/script.js') }}?v=1"></script>
 <script src="{{ asset('assets/user-front/js/cart.js') }}?v=3"></script>
 
+<!-- Sweet Alert (used by bulk-order success popup) -->
+<script src="{{ asset('assets/admin/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+
 @if (session()->has('success'))
   <script>
     "use strict";
@@ -57,5 +60,22 @@
   <script>
     "use strict";
     toastr['warning']("{{ session('warning') }}");
+  </script>
+@endif
+
+@if (session()->has('bulk_order_success'))
+  <script>
+    "use strict";
+    swal({
+      title: @json(__('Success')),
+      text: @json(session('bulk_order_success')),
+      type: 'success',
+      buttons: {
+        confirm: {
+          text: @json('OK'),
+          className: 'btn btn-success'
+        }
+      }
+    });
   </script>
 @endif
