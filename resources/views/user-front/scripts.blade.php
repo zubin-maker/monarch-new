@@ -67,7 +67,6 @@
   <script>
     "use strict";
     swal({
-      title: @json(__('Success')),
       text: @json(session('bulk_order_success')),
       type: 'success',
       buttons: {

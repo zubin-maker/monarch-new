@@ -191,6 +191,15 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
+                                            <label for="">{{ __('Display Order') }}</label>
+                                            <input type="number" class="form-control" name="serial_number"
+                                                value="0" min="0"
+                                                placeholder="{{ __('Enter Display Order') }}">
+                                            <small class="text-muted">{{ __('Lower number = shows first. Leave 0 for default.') }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
                                             <label for=""> {{ __('Current Price') }}
                                                 ({{ $currency->symbol }})
                                                 <span class="text-danger">**</span></label>

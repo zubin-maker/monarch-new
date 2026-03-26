@@ -335,9 +335,13 @@ public function shop(Request $request, $categorySlug = null)
                 'old'        => $q->orderBy('user_items.created_at'),
                 'ascending'  => $q->orderBy('user_items.current_price'),
                 'descending' => $q->orderByDesc('user_items.current_price'),
-                default      => $q->orderByDesc('user_items.id'),
+                default      => $q->orderByRaw('CASE WHEN user_items.serial_number > 0 THEN 0 ELSE 1 END')
+                                  ->orderBy('user_items.serial_number')
+                                  ->orderByDesc('user_items.id'),
             };
-        }, fn($q) => $q->orderByDesc('user_items.id'))
+        }, fn($q) => $q->orderByRaw('CASE WHEN user_items.serial_number > 0 THEN 0 ELSE 1 END')
+                       ->orderBy('user_items.serial_number')
+                       ->orderByDesc('user_items.id'))
 
         ->select(
             'user_items.*',
@@ -602,7 +606,9 @@ public function shop(Request $request, $categorySlug = null)
             ');
                 }
             }, function ($query) {
-                return $query->orderByDesc('user_items.id');
+                return $query->orderByRaw('CASE WHEN user_items.serial_number > 0 THEN 0 ELSE 1 END')
+                             ->orderBy('user_items.serial_number')
+                             ->orderByDesc('user_items.id');
             })
             ->where('user_items.user_id', $user->id)
             ->paginate(12);

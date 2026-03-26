@@ -69,7 +69,7 @@
               <h2 class="title text-center">{{ $userSec->tab_section_title ?? __('Tab Section') }}
                 <span class="line left_right_slide_anim"></span>
               </h2>
-              <p class="text">In 2024 we import many types of furniture, Included wooden chair, luxurious bed etc. </p>
+              {{-- <p class="text">In 2024 we import many types of furniture, Included wooden chair, luxurious bed etc. </p> --}}
             </div>
 
 

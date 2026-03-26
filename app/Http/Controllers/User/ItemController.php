@@ -38,7 +38,10 @@ class ItemController extends Controller
 {
     public function index(Request $request)
     {
-        $lang = Language::where('code', $request->language)->where('user_id', Auth::guard('web')->user()->id)->first();
+        $lang = Language::where('user_id', Auth::guard('web')->user()->id)
+            ->when($request->language, fn($q) => $q->where('code', $request->language))
+            ->when(!$request->language, fn($q) => $q->where('is_default', 1))
+            ->first();
         $lang_id = $lang->id;
         $current_package = UserPermissionHelper::currentPackagePermission(Auth::guard('web')->user()->id);
         $data['item_limit'] = $current_package->product_limit;
@@ -544,6 +547,7 @@ class ItemController extends Controller
     $item->three_d_image    = $request->filled('three_d_image') ? $request->three_d_image : null;
     $item->you_tube         = $request->filled('you_tube') ? $request->you_tube : null;
     $item->background_color = $request->filled('background_color') ? $request->background_color : null;
+    $item->serial_number    = $request->filled('serial_number') ? (int) $request->serial_number : 0;
     $item->save();
 
     // Store slider images (from Dropzone)
@@ -617,8 +621,12 @@ class ItemController extends Controller
     public function edit(Request $request, $id)
     {
         
-        $currentLang = Language::where('code', $request->language)->pluck('id')->firstOrFail();
         $user_id = Auth::guard('web')->user()->id;
+        $lang = Language::where('user_id', $user_id)
+            ->when($request->filled('language'), fn($q) => $q->where('code', $request->language))
+            ->when(!$request->filled('language'), fn($q) => $q->where('is_default', 1))
+            ->firstOrFail();
+        $currentLang = $lang->id;
         $data['languages'] = Language::where('user_id', $user_id)->get();
         $data['item'] = UserItem::where([['id', $id], ['user_id', $user_id]])->firstOrFail();
 
@@ -626,7 +634,6 @@ class ItemController extends Controller
 
         $current_package = UserPermissionHelper::currentPackagePermission($user_id);
         $item_limit = $current_package->product_limit;
-        $lang = Language::where('code', $request->language)->where('user_id', $user_id)->first();
         $data['lang'] = $lang;
         $total_item = UserItem::where('user_id', $user_id)->count();
         if ($total_item > $item_limit) {
@@ -908,6 +915,7 @@ class ItemController extends Controller
     $item->three_d_image = $request->three_d_image ?? null;
     $item->you_tube = $request->you_tube ?? null;
     $item->fake_review_count = $request->fake_review_count;
+    $item->serial_number = $request->filled('serial_number') ? (int) $request->serial_number : ($item->serial_number ?? 0);
     $item->save();
 
     // Update slider images
