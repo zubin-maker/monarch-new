@@ -101,6 +101,13 @@
                                                 data-target="#thumbnail-image-modal">{{ __('Choose Image') }}</button>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>{{ __('Product catalogue (PDF)') }}</label>
+                                            <input type="file" name="catalogue_pdf" class="form-control" accept=".pdf,application/pdf">
+                                            <small class="text-muted d-block mt-1">{{ __('Optional. Shown as “View catalogue” on the storefront product page. Max 20 MB.') }}</small>
+                                        </div>
+                                    </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>{{ __('3D Model URL') }}</label>

@@ -49,7 +49,7 @@
                     <ul class="list-group toggle-list" data-toggle-list="amenitiesToggle" data-toggle-show="7">
                       <li
                         class="list-dropdown {{ Route::current()->getName() == 'front.user.shop' && empty(request()->input('category')) ? 'open' : '' }}">
-                        <a class="category" href="#" data-category-slug-="all">
+                        <a class="category" href="#" data-category-slug-="all" data-banner-url="">
                           {{ $keywords['All'] ?? __('All') }}
                           <span class="qty">({{ $all_category_product_count }})</span>
                         </a>
@@ -87,7 +87,9 @@
                             (isset($selected_category) && $selected_category && $selected_category->id == $category->id);
                         @endphp
                         <li class="list-dropdown {{ $isActiveCategory ? 'open' : '' }}">
-                          <a class="category" href="#" data-slug="{{ $category->slug }}">{{ $category->name }}
+                          <a class="category" href="#" data-slug="{{ $category->slug }}"
+                            data-banner-url="{{ !empty($category->category_background_image) ? asset('assets/front/img/user/items/category_background/' . $category->category_background_image) : '' }}">
+                            {{ $category->name }}
                             <span class="qty">({{ $category_count }})</span></a>
 
                           @php

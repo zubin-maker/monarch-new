@@ -443,6 +443,7 @@ class ItemController extends Controller
     // Validation rules
     $rules = [
         'thumbnail'       => 'required|image|mimes:jpeg,png,jpg,webp',
+        'catalogue_pdf'   => 'nullable|file|mimes:pdf|max:20480',
        'image'           => 'nullable|array',
         'image.*'         => 'string',
         'status'          => 'required|in:0,1',
@@ -514,6 +515,17 @@ class ItemController extends Controller
         Image::make($thumbnail)->resize(255, 255)->save($thumbnailPath . $thumbnailName);
     }
 
+    $cataloguePdfName = null;
+    if ($request->hasFile('catalogue_pdf')) {
+        $pdf = $request->file('catalogue_pdf');
+        $cataloguePdfName = 'cat_' . uniqid() . '.pdf';
+        $pdfDir = public_path('assets/front/img/user/items/catalogue_pdf/');
+        if (! file_exists($pdfDir)) {
+            mkdir($pdfDir, 0775, true);
+        }
+        $pdf->move($pdfDir, $cataloguePdfName);
+    }
+
     // Handle digital file upload
     $downloadFilename = null;
     if ($request->type === 'digital' && $request->file_type === 'upload' && $request->hasFile('download_file')) {
@@ -548,6 +560,7 @@ class ItemController extends Controller
     $item->you_tube         = $request->filled('you_tube') ? $request->you_tube : null;
     $item->background_color = $request->filled('background_color') ? $request->background_color : null;
     $item->serial_number    = $request->filled('serial_number') ? (int) $request->serial_number : 0;
+    $item->catalogue_pdf    = $cataloguePdfName;
     $item->save();
 
     // Store slider images (from Dropzone)
@@ -798,6 +811,7 @@ class ItemController extends Controller
     $rules['current_price'] = 'required|numeric|min:0.01';
     $rules['previous_price'] = 'nullable|numeric|min:0.01';
     $rules['category'] = 'required';
+    $rules['catalogue_pdf'] = 'nullable|file|mimes:pdf|max:20480';
 
     // Type-specific rules
     if ($item->type === 'physical') {
@@ -884,6 +898,17 @@ class ItemController extends Controller
         $image->resize(255, 255);
         $image->save($dir . $thumbnail_name);
         $item->thumbnail = $thumbnail_name;
+    }
+
+    if ($request->hasFile('catalogue_pdf')) {
+        $pdfDir = public_path('assets/front/img/user/items/catalogue_pdf/');
+        @mkdir($pdfDir, 0775, true);
+        if ($item->catalogue_pdf) {
+            @unlink($pdfDir . $item->catalogue_pdf);
+        }
+        $pdfName = 'cat_' . uniqid() . '.pdf';
+        $request->file('catalogue_pdf')->move($pdfDir, $pdfName);
+        $item->catalogue_pdf = $pdfName;
     }
 
     // Handle digital files
@@ -1017,6 +1042,9 @@ class ItemController extends Controller
     {
         $item = UserItem::findOrFail($request->item_id);
         @unlink(public_path('assets/front/img/user/items/thumbnail/') . $item->thumbnail);
+        if ($item->catalogue_pdf) {
+            @unlink(public_path('assets/front/img/user/items/catalogue_pdf/') . $item->catalogue_pdf);
+        }
         foreach ($item->sliders as $key => $image) {
             @unlink(public_path('assets/front/img/user/items/slider-images/') . $image->image);
             $image->delete();
@@ -1067,6 +1095,9 @@ class ItemController extends Controller
             $item = UserItem::where('id', $id)->first();
             if ($item) {
                 @unlink(public_path('assets/front/img/user/items/thumbnail/') . $item->thumbnail);
+                if ($item->catalogue_pdf) {
+                    @unlink(public_path('assets/front/img/user/items/catalogue_pdf/') . $item->catalogue_pdf);
+                }
                 foreach ($item->sliders as $key => $image) {
                     @unlink(public_path('assets/front/img/user/items/slider-images/') . $image->image);
                     $image->delete();

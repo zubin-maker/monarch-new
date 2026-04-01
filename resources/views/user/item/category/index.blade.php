@@ -202,7 +202,8 @@
 
             <div class="row">
               @php
-                $allow_background_image_theme = ['pet'];
+                // Allow uploading a per-category banner (used on Shop breadcrumb).
+                $allow_background_image_theme = ['pet', 'furniture'];
               @endphp
               @if (in_array($userBs->theme, $allow_background_image_theme))
                 <div class="col-md-6">
@@ -222,6 +223,10 @@
                     @if ($userBs->theme == 'pet')
                       <p class="text-warning p-0 mb-1">
                         {{ __('Recommended Image size : 210x210') }}
+                      </p>
+                    @elseif ($userBs->theme == 'furniture')
+                      <p class="text-warning p-0 mb-1">
+                        {{ __('Recommended wide banner approx. 1920×600 (Shop hero)') }}
                       </p>
                     @else
                       <p class="text-warning p-0 mb-1">

@@ -13,7 +13,7 @@
         <div class="col-xl-3 col-lg-6 col-md-6">
           <div class="footer-widget">
             <div class="navbar-brand">
-              <a href="{{ route('front.user.detail.view', getParam()) }}">
+              <a href="/">
                 <img class="lazyload" src="{{ asset('assets/front/images/placeholder.png') }}"
                   data-src="{{ !is_null(@$footer->footer_logo) ? asset('assets/front/img/footer/' . @$footer->footer_logo) : asset('assets/front/img/logo.png') }}"
                   alt="Logo">

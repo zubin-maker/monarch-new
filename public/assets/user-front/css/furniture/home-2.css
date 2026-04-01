@@ -22,6 +22,56 @@
     border-radius: 0 0 30px 30px;
 }
 
+/* Shop breadcrumb hero: full-bleed banner (cover), no letterboxing */
+.page-title-area.header-next {
+    width: 100%;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: relative;
+}
+
+.page-title-area.header-next > img.bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: var(--shop-hero-fit, cover);
+    object-position: var(--shop-hero-position, center);
+}
+
+.page-title-area.header-next .container {
+    position: relative;
+    z-index: 2;
+}
+
+.page-title-area.header-next.shop-breadcrumb {
+    /* Keep breadcrumb visible and anchored to bottom */
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(220px, 22vw, 360px);
+    padding: 40px 0 44px;
+    --shop-hero-fit: cover;
+    /* Bias a bit upward so "subjects" in banners are less likely to be cropped */
+    --shop-hero-position: center 30%;
+}
+
+.page-title-area.header-next.shop-breadcrumb .content {
+    margin-bottom: 0;
+    padding-bottom: 6px; /* extra safe area above rounded corner */
+}
+
+.page-title-area.header-next.shop-breadcrumb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* subtle overlay so text stays readable and never "disappears" visually */
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 65%);
+    z-index: 1;
+    pointer-events: none;
+}
+
 @media only screen and (max-width: 992.99px) {
     .home-slider.home-slider-2 {
         padding: 120px 0 100px;
@@ -32,6 +82,15 @@
         position: relative;
         padding: 110px 0 50px;
         border-radius: 0 0 30px 30px;
+    }
+
+    .page-title-area.header-next {
+        background-size: cover;
+    }
+
+    .page-title-area.header-next.shop-breadcrumb {
+        min-height: 200px;
+        padding: 32px 0 36px;
     }
 }
 

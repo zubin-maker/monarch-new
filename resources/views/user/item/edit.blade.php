@@ -164,8 +164,20 @@
                         data-target="#thumbnail-image-modal">{{ __('Choose Image') }}</button>
                     </div>
                   </div>
-                                                         
-
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label>{{ __('Product catalogue (PDF)') }}</label>
+                      <input type="file" name="catalogue_pdf" class="form-control" accept=".pdf,application/pdf">
+                      <small class="text-muted d-block mt-1">{{ __('Optional. Shown as “View catalogue” on the storefront product page. Max 20 MB.') }}</small>
+                      @if (! empty($item->catalogue_pdf))
+                        <p class="mb-0 mt-2">
+                          <a href="{{ asset('assets/front/img/user/items/catalogue_pdf/'.$item->catalogue_pdf) }}" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-file-pdf"></i> {{ __('Current PDF') }} — {{ __('open in new tab') }}
+                          </a>
+                        </p>
+                      @endif
+                    </div>
+                  </div>
 
                   {{-- thumbnail image end --}}
                   @if ($item->type == 'physical')

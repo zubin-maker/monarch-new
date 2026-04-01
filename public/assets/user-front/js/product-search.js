@@ -65,6 +65,95 @@ function clickSubmit(type = null) {
     });
 }
 
+function updateShopBanner() {
+    var $banner = $('#pageTitleBanner');
+    if ($banner.length === 0) return;
+
+    var $area = $banner.closest('.page-title-area');
+    // Hidden field set by the shop filter form (or server on first paint).
+    var slug = ($('#category').val() || '').toString();
+
+    // Must use .attr('data-banner-url'): jQuery maps data-banner-url to .data('bannerUrl'),
+    // so .data('banner-url') is often undefined and the banner never changed.
+    var bannerUrl = '';
+    if (slug) {
+        $('.widget-categories a.category').each(function () {
+            var $a = $(this);
+            if (($a.attr('data-slug') || '') === slug) {
+                bannerUrl = ($a.attr('data-banner-url') || '').trim();
+                return false;
+            }
+        });
+    }
+
+    if (!bannerUrl) {
+        bannerUrl = ($area.attr('data-default-banner') || '').trim();
+    }
+
+    if (!bannerUrl) return;
+
+    $banner.attr('data-src', bannerUrl);
+    $banner.attr('src', bannerUrl);
+
+    // Theme converts .bg-img into the parent's CSS background and hides the img (see script.js).
+    // Update that background here or swaps have no visible effect.
+    var areaEl = $area[0];
+    if (areaEl) {
+        areaEl.style.backgroundImage = 'url(' + JSON.stringify(bannerUrl) + ')';
+        areaEl.style.backgroundRepeat = 'no-repeat';
+        areaEl.style.backgroundPosition = 'center center';
+        areaEl.style.backgroundSize = 'cover';
+    }
+}
+
+function updateShopBreadcrumb() {
+    var $area = $('.page-title-area.shop-breadcrumb');
+    if ($area.length === 0) return;
+
+    var $crumb = $area.find('ol.breadcrumb').first();
+    if ($crumb.length === 0) return;
+
+    var homeText = ($crumb.find('li.breadcrumb-item a').first().text() || 'Home').trim();
+
+    // Derive the Shop label from current breadcrumb markup if present; otherwise fallback.
+    var shopText = 'Shop';
+    var $shopLi = $crumb.find('li.breadcrumb-item').eq(1);
+    if ($shopLi.length) {
+        shopText = ($shopLi.text() || 'Shop').trim();
+    }
+
+    var slug = ($('#category').val() || '').toString();
+    var isAll = !slug || slug === 'all';
+
+    // Helper to get clean category label (without the "(count)" span)
+    function categoryLabelFromAnchor($a) {
+        if (!$a || $a.length === 0) return '';
+        var $clone = $a.clone();
+        $clone.find('span').remove();
+        return ($clone.text() || '').trim();
+    }
+
+    if (isAll) {
+        $crumb.html(
+            '<li class="breadcrumb-item"><a href="/">' + homeText + '</a></li>' +
+            '<li class="breadcrumb-item active" aria-current="page">' + shopText + '</li>'
+        );
+        return;
+    }
+
+    var $selected = $('.widget-categories a.category').filter(function () {
+        return ($(this).attr('data-slug') || '') === slug;
+    }).first();
+
+    var catLabel = categoryLabelFromAnchor($selected) || slug;
+
+    $crumb.html(
+        '<li class="breadcrumb-item"><a href="/">' + homeText + '</a></li>' +
+        '<li class="breadcrumb-item"><a href="' + (window.shopIndexUrl || '/shop') + '">' + shopText + '</a></li>' +
+        '<li class="breadcrumb-item active" aria-current="page">' + catLabel + '</li>'
+    );
+}
+
 function clickSubmitVariation() {
     var frm = $('#filtersForm');
 
@@ -117,13 +206,15 @@ $('body').on('click', '.category', function (e) {
         $('#categories .list-dropdown:first').addClass('open');
     }
     $('#subcategory').val('');
-    $('#category').val(slug);
+    $('#category').val(slug || '');
     $('#selected-variants').val('');
     $('#selected-ratings').val('');
     $("#rating_div").load(location.href + " #rating_div > *");
     $("#on_sale_div").load(location.href + " #on_sale_div > *");
     $('#page').val('');
     getVariation(slug);
+    updateShopBanner();
+    updateShopBreadcrumb();
     clickSubmit();
 
     setTimeout(function () {
@@ -149,6 +240,8 @@ $('body').on('click', '.subcategory', function (e) {
     $('#page').val('');
 
     getVariation(category_slug, subcategory_slug);
+    updateShopBanner();
+    updateShopBreadcrumb();
     clickSubmit();
 });
 
@@ -266,3 +359,9 @@ null != t && (noUiSlider.create(t, {
         clickSubmit();
     })
 )
+
+// Ensure banner matches current selection on initial load
+$(function () {
+    updateShopBanner();
+    updateShopBreadcrumb();
+});

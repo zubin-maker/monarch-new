@@ -460,6 +460,13 @@
                         @endif
 
                         <!-- Add to Cart & Actions -->
+                        @php
+                            $cataloguePdfName = $product->item->catalogue_pdf ?? null;
+                            $cataloguePdfUrl = $cataloguePdfName
+                                ? asset('assets/front/img/user/items/catalogue_pdf/'.$cataloguePdfName)
+                                : null;
+                        @endphp
+
                         @if ($shop_settings->catalog_mode != 1)
                             <div class="d-flex flex-wrap align-items-center gap-10 mb-20">
                                 <div class="quantity-input d-flex item_quantity_details">
@@ -478,19 +485,38 @@
                             </div>
 
                             <input type="hidden" id="details_final-price">
-                            <button class="btn btn-lg btn-primary radius-md" type="button" onclick="addToCartDetails2()">
-                                <i class="fas fa-cart-plus"></i> {{ __('Shop Now') }}
-                            </button>
+                            <div class="d-flex flex-wrap align-items-center gap-10">
+                                <button class="btn btn-lg btn-primary radius-md" type="button" onclick="addToCartDetails2()">
+                                    <i class="fas fa-cart-plus"></i> {{ __('Shop Now') }}
+                                </button>
+                                @if ($cataloguePdfUrl)
+                                    <a href="{{ $cataloguePdfUrl }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="btn btn-lg btn-outline-primary radius-md">
+                                        <i class="fas fa-file-pdf"></i> {{ $keywords['View_Catalogue'] ?? __('View catalogue') }}
+                                    </a>
+                                @endif
+                            </div>
+                        @elseif ($cataloguePdfUrl)
+                            <div class="mb-20">
+                                <a href="{{ $cataloguePdfUrl }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn btn-lg btn-outline-primary radius-md">
+                                    <i class="fas fa-file-pdf"></i> {{ $keywords['View_Catalogue'] ?? __('View catalogue') }}
+                                </a>
+                            </div>
                         @endif
 
                         <!-- Share Buttons -->
                         <div class="d-flex align-items-center flex-wrap gap-10 mt-20">
                             <span class="text-dark fw-semibold">{{ __('Share Now') }} :</span>
                             <div class="social-link">
-                                <a href="https://www.instagram.com/stories/create/?text={{ urlencode('Check out this product: '.url()->current()) }}" target="_blank"><i class="fab fa-instagram"></i></a>
-                                <a href="//x.com/intent/tweet?text={{ urlencode('Check this out! '.url()->current()) }}" target="_blank"><i class="fab fa-twitter"></i></a>
-                                <a href="//www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                                <a href="https://wa.me/?text={{ urlencode('Check this out: '.url()->current()) }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                <a href="https://www.instagram.com/stories/create/?text={{ urlencode('Check out this product: '.url()->current()) }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                                <a href="//x.com/intent/tweet?text={{ urlencode('Check this out! '.url()->current()) }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                                <a href="//www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://wa.me/?text={{ urlencode('Check this out: '.url()->current()) }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
                             </div>
                         </div>
                     </div>

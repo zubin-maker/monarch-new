@@ -539,8 +539,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             el.addEventListener("lazyloaded", function () {
 
-                // When the image is loaded, set it as the parent's background and hide the img tag
-                parent.style.background = `url(${el.dataset.src}) no-repeat center bottom / cover`;
+                // Shop hero: fill the whole band (object-fit: cover behaviour). Gray bars were from "contain".
+                // Other .bg-img sections keep cover + bottom anchoring.
+                var isShopHeader = parent.classList.contains("header-next");
+                var size = "cover";
+                var position = isShopHeader ? "center center" : "center bottom";
+
+                parent.style.background = `url(${el.dataset.src}) no-repeat ${position} / ${size}`;
                 el.style.display = "none";
             });
         });
