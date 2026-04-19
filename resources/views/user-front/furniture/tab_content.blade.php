@@ -117,11 +117,9 @@
                                         'sliders',
                                     ])
                                     ->first();
-                                $productTitle = @$product_details->itemContents[0]->title;
-                                  $isBanned = trim(strtoupper((string)@$productTitle)) === '4E';
                               @endphp
-                              <div class="col-xl-3 col-lg-3 col-md-6 {{ $isBanned ? 'd-none' : '' }}">
-                                @if (!$isBanned && !is_null(@$product_details->itemContents[0]->slug))
+                              <div class="col-xl-3 col-lg-3 col-md-6">
+                                @if (!is_null(@$product_details->itemContents[0]->slug))
                                   <div class="product-default product-default-2 product-center mb-30">
                                     <figure class="product-img">
                                       <a href="{{ route('front.user.productDetails', ['slug' => $product_details->itemContents[0]->slug]) }}"

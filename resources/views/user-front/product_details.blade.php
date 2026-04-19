@@ -169,6 +169,42 @@
                 width: 64px;
             }
         }
+
+        /* Fulkrum-like split layout: Description vs Features */
+        .product-desc-features {
+            margin-top: 48px;
+            padding: 28px 24px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 18px;
+            background: #fff;
+        }
+        .product-desc-features .section-title {
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            margin-bottom: 14px;
+        }
+        .product-desc-features .section-title.description-title {
+            color: #1b1b1b;
+        }
+        .product-desc-features .section-title.features-title {
+            color: #00c8fa;
+        }
+        .product-desc-features .desc-content {
+            color: #2b2b2b;
+        }
+        .product-desc-features .features-list {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .product-desc-features .features-list li {
+            margin-bottom: 8px;
+            color: #00a9d4;
+            font-weight: 600;
+        }
+        .product-desc-features .features-list li span {
+            color: #1b1b1b;
+            font-weight: 500;
+        }
     </style>
 @endsection
 
@@ -523,44 +559,74 @@
                 </div>
             </div>
 
-                          <div class="product-single-tab pt-70">
+            @php
+                $features = [];
+                $featuresRaw = $product->features ?? null;
+
+                if (is_array($featuresRaw)) {
+                    $features = $featuresRaw;
+                } elseif (is_string($featuresRaw) && trim($featuresRaw) !== '') {
+                    $decoded = json_decode($featuresRaw, true);
+                    if (is_array($decoded)) {
+                        $features = $decoded;
+                    } else {
+                        $features = preg_split("/\R+/", $featuresRaw) ?: [];
+                    }
+                }
+
+                $features = array_values(array_filter(array_map(function ($v) {
+                    return is_string($v) ? trim(strip_tags($v)) : '';
+                }, $features), fn ($v) => $v !== ''));
+            @endphp
+
+            <!-- Fulkrum-like Description + Features block -->
+            <div class="product-desc-features">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="section-title description-title">{{ $keywords['Description'] ?? __('Description') }}</div>
+                        <div class="desc-content tinymce-content">
+                            {!! replaceBaseUrl($product->description ?? null) !!}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="section-title features-title">{{ $keywords['Features'] ?? __('Features') }}</div>
+                        @if (count($features) > 0)
+                            <ul class="features-list">
+                                @foreach ($features as $f)
+                                    <li><span>{{ $f }}</span></li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="text-muted">{{ __('No features added for this product yet.') }}</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-single-tab pt-70">
+                    @if ($shop_settings->item_rating_system == 1 || $shop_settings->disqus_comment_system == 1)
                     <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#desc" type="button">
-                                {{ $keywords['Description'] ?? __('Description') }}
-                            </button>
-                        </li>
                         @if ($shop_settings->item_rating_system == 1)
                             <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews" type="button">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#reviews" type="button">
                                     {{ $keywords['Reviews'] ?? __('Reviews') }}
                                 </button>
                             </li>
                         @endif
                         @if ($shop_settings->disqus_comment_system == 1)
                             <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Disqus" type="button">
+                                <button class="nav-link {{ $shop_settings->item_rating_system == 1 ? '' : 'active' }}" data-bs-toggle="tab" data-bs-target="#Disqus" type="button">
                                     {{ $keywords['Comments'] ?? __('Comments') }}
                                 </button>
                             </li>
                         @endif
                     </ul>
+                    @endif
 
                     <div class="tab-content radius-lg">
-                        <div class="tab-pane fade active show" id="desc">
-                            <div class="tab-description">
-                                <div class="row align-items-center">
-                                    <div class="col-md-12">
-                                        <div class="content mb-30 tinymce-content">
-                                            {!! replaceBaseUrl($product->description ?? null) !!}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         @if ($shop_settings->item_rating_system == 1)
-                            <div class="tab-pane fade" id="reviews">
+                            <div class="tab-pane fade active show" id="reviews">
                                 <div class="tav-review mb-30">
                                     <h4 class="mb-15">{{ $keywords['Customer Reviews'] ?? __('Customer Reviews') }}</h4>
                                     <ul class="comment-list">
@@ -632,7 +698,7 @@
                         @endif
 
                         @if ($shop_settings->disqus_comment_system == 1)
-                            <div class="tab-pane fade" id="Disqus">
+                            <div class="tab-pane fade {{ $shop_settings->item_rating_system == 1 ? '' : 'active show' }}" id="Disqus">
                                 <div id="disqus_thread"></div>
                             </div>
                         @endif

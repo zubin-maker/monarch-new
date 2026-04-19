@@ -113,13 +113,39 @@ function updateShopBreadcrumb() {
     var $crumb = $area.find('ol.breadcrumb').first();
     if ($crumb.length === 0) return;
 
+    // Prefer Blade data-shop-url (url('/product-category')); never trust route() on some servers.
+    var shopHref = ($area.attr('data-shop-url') || '').toString().trim();
+    if (!shopHref) {
+        shopHref = ($crumb.find('li.breadcrumb-item').eq(1).find('a').first().attr('href') || '').trim();
+    }
+    try {
+        var pu = new URL(shopHref, window.location.href);
+        var p = pu.pathname || '';
+        if (p === '/shop' || /\/shop\/?$/.test(p)) {
+            pu.pathname = p.replace(/\/shop\/?$/, '/product-category');
+            shopHref = pu.toString();
+        }
+    } catch (e) {
+        if (shopHref === '/shop') {
+            shopHref = '/product-category';
+        }
+    }
+    if (!shopHref) {
+        shopHref = '/product-category';
+    }
+
     var homeText = ($crumb.find('li.breadcrumb-item a').first().text() || 'Home').trim();
 
     // Derive the Shop label from current breadcrumb markup if present; otherwise fallback.
     var shopText = 'Shop';
     var $shopLi = $crumb.find('li.breadcrumb-item').eq(1);
     if ($shopLi.length) {
-        shopText = ($shopLi.text() || 'Shop').trim();
+        var $shopA = $shopLi.find('a').first();
+        if ($shopA.length) {
+            shopText = ($shopA.text() || 'Shop').trim();
+        } else {
+            shopText = ($shopLi.text() || 'Shop').trim();
+        }
     }
 
     var slug = ($('#category').val() || '').toString();
@@ -131,6 +157,10 @@ function updateShopBreadcrumb() {
         var $clone = $a.clone();
         $clone.find('span').remove();
         return ($clone.text() || '').trim();
+    }
+
+    function escapeAttr(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
 
     if (isAll) {
@@ -149,7 +179,7 @@ function updateShopBreadcrumb() {
 
     $crumb.html(
         '<li class="breadcrumb-item"><a href="/">' + homeText + '</a></li>' +
-        '<li class="breadcrumb-item"><a href="' + (window.shopIndexUrl || '/shop') + '">' + shopText + '</a></li>' +
+        '<li class="breadcrumb-item"><a href="' + escapeAttr(shopHref) + '">' + shopText + '</a></li>' +
         '<li class="breadcrumb-item active" aria-current="page">' + catLabel + '</li>'
     );
 }

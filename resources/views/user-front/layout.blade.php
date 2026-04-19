@@ -262,6 +262,7 @@
       gtag('config', '{{ $userBs->measurement_id }}');
     </script>
   @endif
+{{-- Google tag (gtag.js) – AW-741835309 & G-N45DJJZHGS disabled; uncomment to re-enable
 <!-- Google tag (gtag.js) -->
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-741835309"></script>
@@ -282,6 +283,7 @@
 
   gtag('config', 'G-N45DJJZHGS');
 </script>
+--}}
 
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

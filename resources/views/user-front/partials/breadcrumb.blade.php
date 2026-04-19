@@ -44,7 +44,11 @@
 @endphp
 
 <div class="page-title-area header-next {{ $isShopPage ? 'shop-breadcrumb' : '' }}"
-  data-default-banner="{{ $breadcrumbBannerUrl ?? '' }}">
+  data-default-banner="{{ $breadcrumbBannerUrl ?? '' }}"
+  @if ($isShopPage)
+    data-shop-url="{{ url('/product-category') }}"
+  @endif
+>
   @if (!empty($finalBannerUrl))
     <img id="pageTitleBanner" class="bg-img" src="{{ asset('assets/front/images/placeholder.png') }}"
       data-src="{{ $finalBannerUrl }}" alt="Banner">
@@ -69,7 +73,7 @@
              <li class="breadcrumb-item active" aria-current="page">{{ $shopLabel }}</li>
            @else
              <li class="breadcrumb-item">
-               <a href="{{ route('front.user.shop', getParam()) }}">{{ $shopLabel }}</a>
+               <a href="{{ url('/product-category') }}">{{ $shopLabel }}</a>
              </li>
              <li class="breadcrumb-item active" aria-current="page">{{ $categoryName ?? ucfirst($shopCategorySlug) }}</li>
            @endif
